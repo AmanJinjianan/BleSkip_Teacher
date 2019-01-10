@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <!-- 首先定义标题栏 -->
+    <RelativeLayout
+        android:id="@+id/biaoti"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#EBEBEB">
+        <TextView
+            android:text="标题栏"
+            android:id="@+id/text_title"
+            android:textSize="21sp"
+            android:textColor="#000000"
+            android:gravity="center"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+        <Button
+            android:layout_width="70dp"
+            android:layout_height="match_parent"
+            android:drawablePadding="6dp"
+            android:background="@drawable/btn_right2"
+            android:rotation="180"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:onClick="backtostulist"
+            android:paddingLeft="5dp"
+            android:singleLine="true"
+            android:textColor="#ffffffff"
+            android:visibility="visible" />
+        <Button
+            android:layout_width="70dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:drawablePadding="6dp"
+            android:background="@drawable/pointing"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:paddingLeft="5dp"
+            android:singleLine="true"
+            android:textColor="#ffffffff"
+            android:textSize="18dp"
+            android:visibility="visible" />
+    </RelativeLayout>
+    <TextView
+        android:id="@+id/textView1102"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_margin="8dp"
+        android:gravity="center_vertical"
+        android:background="@color/colorAccent"
+        android:text="2016级八（八）班 61人" />
+    <LinearLayout
+        android:id="@+id/table1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:background="@drawable/border"
+                android:layout_margin="1dp"
+                android:text="@string/stu_name" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:background="@drawable/border"
+                android:layout_margin="1dp"
+                android:text="@string/stu_gender" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:background="@drawable/border"
+                android:layout_margin="1dp"
+                android:text="@string/stu_mark" />
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:background="@drawable/border"
+                android:layout_margin="1dp"
+                android:text="@string/stu_state" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/lv_studetail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+
+</LinearLayout>

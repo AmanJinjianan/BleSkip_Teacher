@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <!-- 首先定义标题栏 -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#EBEBEB">
+        <TextView
+            android:text="标题栏"
+            android:textSize="21sp"
+            android:textColor="#000000"
+            android:gravity="center"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <Button
+            android:layout_width="70dp"
+            android:layout_height="match_parent"
+            android:drawablePadding="6dp"
+            android:background="@drawable/btn_right2"
+            android:rotation="180"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:onClick="backtolastpage"
+            android:paddingLeft="5dp"
+            android:singleLine="true"
+            android:textColor="#ffffffff"
+            android:visibility="visible" />
+
+        <Button
+            android:id="@+id/button_forward22"
+            android:layout_width="70dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:drawablePadding="6dp"
+            android:background="@drawable/pointing"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:paddingLeft="5dp"
+            android:singleLine="true"
+            android:textColor="#ffffffff"
+            android:textSize="18dp"
+            android:visibility="visible" />
+    </RelativeLayout>
+
+    <ImageButton
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:src="@drawable/arrow" />
+    <TextView
+        android:id="@+id/tv_stu_name22"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="50dp"
+        android:text="TextView" />
+    <TextView
+        android:id="@+id/tv_stu_gender22"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="50dp"
+        android:text="TextView" />
+    <TextView
+        android:id="@+id/tv_stu_height22"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="50dp"
+        android:text="TextView" />
+    <TextView
+        android:id="@+id/tv_stu_weight22"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="50dp"
+        android:text="TextView" />
+    <TextView
+        android:id="@+id/tv_stu_area22"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="50dp"
+        android:text="TextView" />
+    <TextView
+        android:id="@+id/tv_stu_school22"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="50dp"
+        android:text="TextView" />
+    <TextView
+        android:id="@+id/tv_stu_class22"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="50dp"
+        android:text="TextView" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="50dp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="备注" />
+        <EditText
+            android:layout_weight="1"
+            android:id="@+id/ed_stu_ps"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="-20dp"
+            android:text="最多写入三个汉字" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:orientation="vertical">
+        <Button
+            android:id="@+id/btn_refuse22"
+            android:layout_weight="2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:text="五角星"/>
+        <Button
+            android:id="@+id/btn_delete"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:background="#FF0000"
+            android:text="@string/btn_agree"/>
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/mission_date"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="3dp"
+        android:gravity="center"
+        android:background="@drawable/shape"
+        android:text="2018-7-3" />
+
+    <TextView
+        android:id="@+id/mission_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="120dp"
+        android:layout_marginTop="3dp"
+        android:gravity="center"
+        android:text="@string/title_mission" />
+
+    <TextView
+        android:id="@+id/mission_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="190dp"
+        android:layout_marginTop="3dp"
+        android:gravity="center"
+        android:text="15/20人" />
+</FrameLayout>

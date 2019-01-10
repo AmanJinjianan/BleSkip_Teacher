@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+        <TextView
+            android:id="@+id/tv_going_return"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:background="#6495ED"
+            android:text="TextView" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal">
+
+         <TextView
+             android:layout_width="0dp"
+             android:layout_height="match_parent"
+             android:layout_weight="2"
+             android:layout_margin="15dp"
+             android:background="@drawable/shape2"
+             android:gravity="center"
+             android:id="@+id/tv_timer"/>
+
+        <Button
+            android:id="@+id/countdown3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="12dp"
+            android:background="#CD950C"
+            android:text="3S后开始" />
+    </LinearLayout>
+    <View android:layout_width="fill_parent" android:background="#000000" android:layout_height="1px"></View>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_going_over"
+            android:layout_width="match_parent"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="70dp"
+            android:layout_marginRight="70dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:background="#6495ED"
+            android:text="TextView" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="0dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="3"
+                android:gravity="center"
+                android:background="#CDC9C9"
+                android:text="姓名" />
+            <View android:layout_width="1px" android:background="#000000" android:layout_height="fill_parent"></View>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:background="#CDC9C9"
+                android:text="性别" />
+            <View android:layout_width="1px" android:background="#000000" android:layout_height="fill_parent"></View>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="3"
+                android:gravity="center"
+                android:background="#CDC9C9"
+                android:text="成功个数" />
+            <View android:layout_width="1px" android:background="#000000" android:layout_height="fill_parent"></View>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="3"
+                android:gravity="center"
+                android:background="#CDC9C9"
+                android:text="失败个数" />
+            <View android:layout_width="1px" android:background="#000000" android:layout_height="fill_parent"></View>
+            <TextView
+                android:id="@+id/textView9"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:background="#CDC9C9"
+                android:text="分值" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/lv_teachgoing"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</LinearLayout>
