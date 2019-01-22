@@ -340,7 +340,6 @@ private void InitTeach(){
     //以班级id作为对应班级的表名
     mData2 = GetSqlData(bjid+"_"+ClassName);
 
-
     adapter23 = new MyAdapterMission(mData2,MainActivity.this);
     adapter23.setOnInnerItemOnClickListener(this);
     lv2.setAdapter(adapter23);
@@ -375,7 +374,7 @@ private void GetDetailInfoFromSQL(String tableName,String peoplecount,String ove
     ArrayList<StuTrainGoingInfo> data2 = new ArrayList<>();
     StuDBHelper dbHelper = new StuDBHelper(MainActivity.this,Utils.SDLName,null,1);
     SQLiteDatabase dbQuery = dbHelper.getReadableDatabase();
-        Cursor cursor = dbQuery.query(tableName,new String[]{"stuid","stuname","stusex","stusuccesssount","stufailcount","stuscore"},null,null,null,null,null);
+        Cursor cursor = dbQuery.query(tableName,new String[]{"stuid","stuname","stusex","stusuccesssount","stufailcount","stuscore","stuInClassIndex"},null,null,null,null,null);
         while (cursor.moveToNext()){
             String stuid = cursor.getString(cursor.getColumnIndex("stuid"));
 
@@ -385,6 +384,8 @@ private void GetDetailInfoFromSQL(String tableName,String peoplecount,String ove
             String stufailcount = cursor.getString(cursor.getColumnIndex("stufailcount"));
             String stuscore = cursor.getString(cursor.getColumnIndex("stuscore"));
 
+            int stuInClassIndex = cursor.getInt(cursor.getColumnIndex("stuInClassIndex"));
+
             StuTrainGoingInfo data = new StuTrainGoingInfo();
             data.name = stuname;
             data.sex = Integer.valueOf(stusex);
@@ -392,6 +393,7 @@ private void GetDetailInfoFromSQL(String tableName,String peoplecount,String ove
             data.lostCount = Integer.valueOf(stufailcount);
             data.jumpCount = stusuccesssount;
 
+            data.stuInClassIndex = stuInClassIndex;
             data2.add(data);
             Utils.LogE("kkkkkkkkkkkkkkkkkkkkkkkkkkkoo333333333333stuname:"+stuid+" "+stuname+" "+stusex+" "+stusuccesssount.length+" "+stufailcount);
         }
@@ -687,10 +689,12 @@ private void RequestClassInfo(){
                         //if(jb == null) Log.e(Utils.TAG,"jb是null了：333333333333333333333333"+classId+"   "+);
                         xIndex++;
                         yIndex = 0;
+                        jb.put("index",yIndex);
                         Utils.stuInfo[xIndex][yIndex] = jb;
                         classId = jb.getString("bjid");
                     }else {
                         yIndex++;
+                        jb.put("index",yIndex);
                         Utils.stuInfo[xIndex][yIndex] = jb;
                     }
                 }

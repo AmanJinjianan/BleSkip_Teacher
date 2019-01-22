@@ -115,7 +115,7 @@ public class TeachGoingActivity extends Activity implements View.OnClickListener
                 //Utils.LogE("有人是false::::::::::::::学号"+xh);
                 try{
                     int hg = XhAndIndexMap.get(xh);
-                    Log.e("falter","jsonexception,,,,,,,,,,,,,,:"+xh+"  :"+hg);
+                    Log.e("falter",":::::::::,,,,,,,,,,,,,,:"+xh+"  :"+hg);
                     hj[hg].put("onlinebool",false);
                 }catch(Exception e){
                     Log.e("falter","jsonexception555,,,,,,,,,,,,,,:"+e.toString());
@@ -152,6 +152,7 @@ public class TeachGoingActivity extends Activity implements View.OnClickListener
     byte[] peopleXHList;
     String[] peopleNameList;
     int[] peopleSexList;
+    //int[] peopleIndexList;//记录同学在班级中的位置（在对应班级中的index）
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -164,6 +165,8 @@ public class TeachGoingActivity extends Activity implements View.OnClickListener
 
         misData= intent.getByteArrayExtra("misData");
 
+
+        //Utils.stuInClassIndex = theIndexArray;
         if(modelFlag==1){
             //long millisTime = switchTime(misData);
             myTimer = new TimeCount(switchTime(misData)*10, 1000);//构造CountDownTimer对象
@@ -177,11 +180,13 @@ public class TeachGoingActivity extends Activity implements View.OnClickListener
         peopleXHList = new byte[theIndexArray.length];
         peopleNameList= new String[theIndexArray.length];
         peopleSexList= new int[theIndexArray.length];
+       // peopleIndexList= new int[theIndexArray.length];
         try{
             for(int i=0;i<theIndexArray.length;i++){
                 peopleXHList[i] = Byte.valueOf(Utils.stuInfo[index][theIndexArray[i]].get("xsnum").toString());
                 peopleNameList[i] =Utils.stuInfo[index][theIndexArray[i]].get("xsname").toString();
                 peopleSexList[i] =Integer.valueOf(Utils.stuInfo[index][theIndexArray[i]].get("sex").toString());
+               //peopleIndexList[i] = Integer.valueOf(Utils.stuInfo[index][theIndexArray[i]].get("index").toString());
             }
         }catch (Exception e){}
 
@@ -334,6 +339,7 @@ public class TeachGoingActivity extends Activity implements View.OnClickListener
                 hjy.put("xsname",peopleNameList[i]);
                 nameMap.put(peopleXHList[i],peopleNameList[i]);
                 hjy.put("sex",peopleSexList[i]);
+                //hjy.put("index",peopleIndexList[i]);
                 hjy.put("fs",String.valueOf(i));
                 hjy.put("gotcount",00);
 
@@ -532,10 +538,13 @@ public class TeachGoingActivity extends Activity implements View.OnClickListener
         ArrayList<StuTrainGoingInfo> test2s = new ArrayList<StuTrainGoingInfo>();
 
          Set<Map.Entry<String,LinkedList>> setme = dataMap.entrySet();
+         int ii =-1;
        for(Iterator<Map.Entry<String,LinkedList>> it = setme.iterator();it.hasNext();){
+           ii++;
            LinkedList df =it.next().getValue();
            StuTrainGoingInfo data = (StuTrainGoingInfo)(df.get(df.size()-1));
            data.lostCount = CalculateLoseCount(df);
+           data.stuInClassIndex = theIndexArray[ii];
            //data.lostCount = 9;
            test2s.add(data);
        }
@@ -556,6 +565,7 @@ public class TeachGoingActivity extends Activity implements View.OnClickListener
         it.putExtra("gotPeopleCount",missionNumCount);
         it.putExtra("overPeopleCount",overNumCount);
 
+        it.putExtra("stuInClassIndex",theIndexArray);
         startActivity(it);
         finish();
     }

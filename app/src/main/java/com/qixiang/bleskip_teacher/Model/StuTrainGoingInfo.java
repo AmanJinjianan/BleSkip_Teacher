@@ -7,6 +7,41 @@ import java.io.Serializable;
  */
 
 public class StuTrainGoingInfo implements Serializable{
+
+    public String name;
+    public byte xh;
+    public int sex;
+    public byte thisPacketCount;//当前包包含的跳数
+    public byte[] jumpCount = new byte[2];//底层记录的跳数
+    public byte[] timeState = new byte[2];//底层记录的倒计时末尾距离此刻时间差
+    public byte[] chaArray ;
+    public int lostCount;//记录失败个数
+
+    public int stuInClassIndex;//记录此同学在班级大列表中的位置
+
+    public StuTrainGoingInfo(){}
+    public StuTrainGoingInfo(String name,byte xh,int sex,byte thisPacketCount,byte[] jumpCount,byte[] timeState,byte[] chaArray){
+
+        this.name = name;
+        this.xh = xh;
+        lostCount = 0;
+        this.sex = sex;
+        this.thisPacketCount =thisPacketCount;
+        this.jumpCount = jumpCount;
+        this.timeState = timeState;
+        this.chaArray = chaArray;
+
+        //this.stuInClassIndex = stuInClassIndex;
+    }
+
+    public int getClassIndex() {
+        return stuInClassIndex;
+    }
+
+    public void setClassIndex(int classIndex) {
+        this.stuInClassIndex = stuInClassIndex;
+    }
+
     public String getName() {
         return name;
     }
@@ -45,29 +80,6 @@ public class StuTrainGoingInfo implements Serializable{
 
     public void setTimeState(byte[] timeState) {
         this.timeState = timeState;
-    }
-
-    public String name;
-    public byte xh;
-    public int sex;
-    public byte thisPacketCount;//当前包包含的跳数
-    public byte[] jumpCount = new byte[2];//底层记录的跳数
-    public byte[] timeState = new byte[2];//底层记录的倒计时末尾距离此刻时间差
-    public byte[] chaArray ;
-    public int lostCount;//记录失败个数
-
-    public StuTrainGoingInfo(){
-    }
-    public StuTrainGoingInfo(String name,byte xh,int sex,byte thisPacketCount,byte[] jumpCount,byte[] timeState,byte[] chaArray){
-
-        this.name = name;
-        this.xh = xh;
-        lostCount = 0;
-        this.sex = sex;
-        this.thisPacketCount =thisPacketCount;
-        this.jumpCount = jumpCount;
-        this.timeState = timeState;
-        this.chaArray = chaArray;
     }
 
 }

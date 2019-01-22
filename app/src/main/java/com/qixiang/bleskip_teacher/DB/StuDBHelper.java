@@ -60,7 +60,7 @@ public class StuDBHelper extends SQLiteOpenHelper {
     //每次插入结果详情时，都依照当时时刻作为表名
     public void CreateTable(SQLiteDatabase db, String table_name) {
         String sql2 = "create table IF NOT EXISTS " + table_name + " (number_id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "tasktime varchar(20),tasktype int, taskname varchar(10),taskcontent varchar(10),stuid int,stuname varchar(10)," +
+                "tasktime varchar(20),tasktype int,stuInClassIndex int, taskname varchar(10),taskcontent varchar(10),stuid int,stuname varchar(10)," +
                 "stusex int,stusuccesssount int,stufailcount int,stutime varchar(10),stuscore int,stustate REAL,stustrtimedif varchar(10))";
         db.execSQL(sql2);
     }

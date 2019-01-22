@@ -54,6 +54,8 @@ public class GameResultActivity extends Activity implements View.OnClickListener
 
     private TwoSelectDialog twoSelectDialog;
 
+    int[] stuInClassIndex;
+
     private AdapterView.OnItemLongClickListener onItemLongClickListener = new AdapterView.OnItemLongClickListener() {
         @Override
         public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -92,6 +94,8 @@ public class GameResultActivity extends Activity implements View.OnClickListener
         InitListview(data2,srcFlag);
 
         if(srcFlag==1){
+
+            stuInClassIndex = getIntent().getIntArrayExtra("stuInClassIndex");
             simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");// HH:mm:ss
             String timeSting = simpleDateFormat.format(new Date(System.currentTimeMillis()));
             SaveDataToSQL(timeSting,Utils.ModelFlag,Utils.taskName,PeopleCount,overPeopleCount);
@@ -148,6 +152,8 @@ public class GameResultActivity extends Activity implements View.OnClickListener
                 cv.put("stuscore", 18);
                 cv.put("stustate", 0);
                 cv.put("stustrtimedif", "stustrtimedif000");
+
+                cv.put("stuInClassIndex",stuInClassIndex[i]);
                 dbHelper.InsertData(dbWrite, timeString, cv);
 
 //                JSONObject hjy = new JSONObject();
@@ -213,6 +219,8 @@ public class GameResultActivity extends Activity implements View.OnClickListener
                 hjy.put("losecount",data.get(i).lostCount);
                 hjy.put("fs","随便");
 
+                hjy.put("stuInClassIndex",data.get(i).stuInClassIndex);
+                //hjy.put("stuIndex",)
                 gotCountList[i] = ff;
 
                 hjy.put("onlinebool",false);
@@ -241,6 +249,8 @@ public class GameResultActivity extends Activity implements View.OnClickListener
                 hjy.put("gotcount", 0);
                 hjy.put("losecount", 0);
                 hjy.put("fs", 00);
+
+                hjy.put("stuInClassIndex",-1);
                 hj[hj.length-1] = hjy;
 
         }catch(Exception e){}
@@ -252,6 +262,10 @@ public class GameResultActivity extends Activity implements View.OnClickListener
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+
+
+                //JSONObject jb = (JSONObject)arg0.getItemAtPosition(arg2);
+
                 // 取得ViewHolder对象，这样就省去了通过层层的findViewById去实例化我们需要的cb实例的步骤
                 MyAdapterForGameResult.ViewHolder holder = (MyAdapterForGameResult.ViewHolder) arg1.getTag();
                 // 改变CheckBox的状态
@@ -372,7 +386,24 @@ public class GameResultActivity extends Activity implements View.OnClickListener
                         selectIndexArray[maIndex++] = i;
                 }
 
-                Toast.makeText(GameResultActivity.this,"请选择至少一个人开始。。。33",Toast.LENGTH_SHORT).show();
+                int[] theIndexArray = new int[checkNum];
+                for(int p=0;p<checkNum;p++){
+
+                       try{
+                               theIndexArray[p] =  hj[selectIndexArray[p]].getInt("stuInClassIndex");
+                    }catch (Exception e){
+
+                    }
+                       // Toast.makeText(GameResultActivity.this,"请选择至少一个人开始。。。"+ff,Toast.LENGTH_SHORT).show();
+                }
+
+                seletedFlag = -1;
+                Intent intent = new Intent();
+                intent.putExtra("indexarray",theIndexArray);
+                intent.putExtra("selectedflag",seletedFlag);
+                intent.setClass(GameResultActivity.this,EighteenMissionActivity.class);
+                startActivity(intent);
+                GameResultActivity.this.finish();
                 break;
 
         }

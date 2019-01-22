@@ -53,7 +53,7 @@ public class EighteenMissionActivity extends Activity implements View.OnClickLis
     }
     //返回上一页事件
     public void backtomainpage(View v){
-        //EighteenMissionActivity.this.finish();
+        EighteenMissionActivity.this.finish();
     }
     //派发任务事件
     public void paifamission(View v){
@@ -151,7 +151,6 @@ public class EighteenMissionActivity extends Activity implements View.OnClickLis
                 missionData[1] = 0x00;
                 break;
             case R.id.btn_mission_confirmgo:
-
                 ReadyGO(ModelFlag,selectedflag,indexarray);
                 break;
 
@@ -167,9 +166,7 @@ public class EighteenMissionActivity extends Activity implements View.OnClickLis
             Toast.makeText(EighteenMissionActivity.this,"请选择一种训练模式",Toast.LENGTH_SHORT).show();
             return;
         }
-        if(indexarray.length<=13){
-
-        }else {}
+        if(indexarray.length<=13){}else {}
 
         Intent intent = new Intent(EighteenMissionActivity.this,TeachGoingActivity.class);
         intent.putExtra("indexarray",indexarray);

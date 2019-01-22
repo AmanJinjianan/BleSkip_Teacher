@@ -61,6 +61,9 @@ public class Utils {
     //用于标识“已勾选”的班级标识，进行后面的教学任务
     public static int ClassIndex2 = 0;
 
+    //记录进行任务的所有同学的“在班位置”
+    public static int[] stuInClassIndex;
+
     //数据库名字
     public static String SDLName ="BleSkip_test1";
     //数据库表名（同一时刻只会访问一个班）
