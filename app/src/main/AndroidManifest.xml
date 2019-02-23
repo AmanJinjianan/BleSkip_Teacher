@@ -25,7 +25,12 @@
             android:launchMode="singleTask">
 
         </activity>
-        <activity android:name=".EighteenMissionActivity" />
+        <activity android:name=".EighteenMissionActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".StudentListActivity" />
         <activity android:name=".StudentInfoForApplyActivity">
             <intent-filter>
@@ -44,16 +49,12 @@
         <activity android:name=".TeachGoingActivity"></activity>
         <activity android:name=".SQLiteActivity"></activity>
         <activity android:name=".Test3Char"></activity>
+
         <activity
             android:name=".BleConnectActivity"
             android:launchMode="singleInstance"></activity>
         <activity android:name=".LoginActivity"
             android:launchMode="singleInstance">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
         </activity>
         <activity
         android:name=".wxapi.WXEntryActivity"

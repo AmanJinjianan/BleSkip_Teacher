@@ -433,6 +433,7 @@ public class TeachGoingActivity extends Activity implements View.OnClickListener
 
         bluetoothReceiver = new BluetoothReceiver();
         registerReceiver(bluetoothReceiver, intentFilter);
+
     }
 
     @Override

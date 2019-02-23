@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">BleSkip_Teacher</string>
 
+
     <string name="title">登录平台，开启移动教学</string>
     <string name="title1">验证码登录</string>
     <string name="title2">使用微信账号登录</string>
@@ -46,7 +47,7 @@
     <string name="about_app_icon_content_description">App icon</string>
     <string name="about_go_to_github">Go to GitHub</string>
     <string name="title_activity_call_program_acitivity">CallProgramAcitivity</string>
+    <string name="add_icon">+</string>
 
-    <string name="add_icon">444</string>
 
 </resources>

@@ -14,4 +14,9 @@
         <item>2020</item>
         <item>2021 </item>
     </string-array>
+
+    <string-array name="missiontype">
+        <item>计时</item>
+        <item>计数 </item>
+    </string-array>
 </resources>
