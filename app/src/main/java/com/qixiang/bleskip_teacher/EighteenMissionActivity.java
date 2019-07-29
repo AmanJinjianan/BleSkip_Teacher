@@ -158,7 +158,7 @@ public class EighteenMissionActivity extends Activity implements View.OnClickLis
             }
         }
     };
-    private AdapterView.OnItemSelectedListener onItemSelectedListener = new AdapterView.OnItemSelectedListener() {
+   /* private AdapterView.OnItemSelectedListener onItemSelectedListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
@@ -171,17 +171,29 @@ public class EighteenMissionActivity extends Activity implements View.OnClickLis
         public void onNothingSelected(AdapterView<?> adapterView) {
             theType ="计时";
         }
-    };
+    };*/
     public CreateMissionDialog createMisionDialog;
     public String classNameString,classCountString;
     private String theType ="计时";
     public void showEditDialog(View view) {
-        createMisionDialog = new CreateMissionDialog(this,R.style.AppTheme,onClickListener,onItemSelectedListener);
-        createMisionDialog.show();
-    }
-      //Tools.mBleService.characterWrite1.setValue(hexToBytes(string));
-      //Tools.mBleService.mBluetoothGatt.writeCharacteristic(Tools.mBleService.characterWrite1);
+        if(createMisionDialog == null){
+            createMisionDialog = new CreateMissionDialog(this,R.style.AppTheme,onClickListener);
 
+            if(buttonFlag<10)
+                createMisionDialog.theType = "计时";
+            else
+                createMisionDialog.theType = "计数";
+            createMisionDialog.show();
+    }else {
+            if(buttonFlag<10)
+                createMisionDialog.theType = "计时";
+            else
+                createMisionDialog.theType = "计数";
+
+            createMisionDialog.SetType();
+            createMisionDialog.show();
+        }
+    }
     //分别上个页面是 “全选”，“全男”，“全女”
     private byte GetDataCount(int selectedflag){
         switch (selectedflag){
@@ -198,7 +210,6 @@ public class EighteenMissionActivity extends Activity implements View.OnClickLis
     void CreateMission(){}
     @Override
     public void onClick(View v) {
-
         Utils.LogE("selectedflag:55555555555");
         switch (v.getId()){
             case R.id.btn_mission_1:
@@ -238,15 +249,15 @@ public class EighteenMissionActivity extends Activity implements View.OnClickLis
                 ReadyGO(ModelFlag,selectedflag,indexarray);
                 break;
            default:
-               ButtonSwitch(v.getId());
+                ButtonSwitch(v.getId());
                    // Toast.makeText(EighteenMissionActivity.this,"未开发。。。",Toast.LENGTH_SHORT).show();
                     break;
         }
     }
-    
+
     int buttonFlag=0;
     private void ButtonSwitch(int ViewId){
-        showEditDialog(null);
+
         switch (ViewId){
             case R.id.btn_mission_3: buttonFlag=3; break;
             case R.id.btn_mission_4: buttonFlag=4; break;
@@ -264,6 +275,7 @@ public class EighteenMissionActivity extends Activity implements View.OnClickLis
             case R.id.btn_mission_17: buttonFlag=17; break;
             case R.id.btn_mission_18: buttonFlag=18; break;
         }
+        showEditDialog(null);
     }
 
     private void ReadyGO(int modelFlag,int selectedflag, int[] indexarray) {

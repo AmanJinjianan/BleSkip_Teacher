@@ -14,6 +14,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.qixiang.bleskip_teacher.R;
+import com.qixiang.bleskip_teacher.Util.Utils;
 
 /**
  * Created by Administrator on 2018/8/8.
@@ -30,13 +31,14 @@ public class CreateMissionDialog extends Dialog {
     public TextView tv_mission_type;
 
     private View.OnClickListener mClickListener;
+    public String theType;
     //private AdapterView.OnItemSelectedListener onItemSelect;
 
     public CreateMissionDialog(Activity context) {
         super(context);
         this.context = context;
     }
-    public CreateMissionDialog(Activity context, int theme, View.OnClickListener clickListener, AdapterView.OnItemSelectedListener onItemSelect) {
+    public CreateMissionDialog(Activity context, int theme, View.OnClickListener clickListener) {
         super(context, theme);
         this.context = context;
         this.mClickListener = clickListener;
@@ -52,6 +54,8 @@ public class CreateMissionDialog extends Dialog {
         theValue = (EditText) findViewById(R.id.et_missiondialog_bjrs);
 
         tv_mission_type = (TextView)findViewById(R.id.tv_mission_type);
+
+        tv_mission_type.setText(theType);
         //sp_mission_type.setOnItemSelectedListener(onItemSelect);
 
         btn_cancel = (Button) findViewById(R.id.btn_missiondialog_cancle);
@@ -59,6 +63,8 @@ public class CreateMissionDialog extends Dialog {
         btn_cancel.setOnClickListener(mClickListener);
         btn_confirm.setOnClickListener(mClickListener);
 
+
+        Utils.LogE("selectedflag:5555555555511111111111111111");
         /*
          * 获取圣诞框的窗口对象及参数对象以修改对话框的布局设置, 可以直接调用getWindow(),表示获得这个Activity的Window
          * 对象,这样这可以以同样的方式改变这个Activity的属性.
@@ -74,6 +80,10 @@ public class CreateMissionDialog extends Dialog {
         //dialogWindow.setBackgroundDrawableResource(R.drawable.success);
 
         this.setCancelable(true);
+    }
+    public void SetType(){
+
+        tv_mission_type.setText(theType);
     }
 }
 

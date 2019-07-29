@@ -58,6 +58,7 @@
         android:src="@drawable/loading" />
 
     <TextView
+        android:id="@+id/thrtittle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -72,11 +73,24 @@
         android:src="@drawable/btn_play" />
 
     <Button
-        android:id="@+id/btn_ble_jump"
+    android:id="@+id/btn_ble_jump"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="60dp"
+    android:background="#FFFFFF"
+    android:text="@string/btn_jump" />
+    <!--<Button
+        android:id="@+id/btn_reset"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="1dp"
         android:background="#FFFFFF"
-        android:text="@string/btn_jump" />
-
+        android:text="重置次数" />-->
+    <Button
+        android:id="@+id/btn_startAd"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        android:background="#FFFFFF"
+        android:text="开始广播" />
 </LinearLayout>

@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,17 +24,22 @@ import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.util.Base64;
+import android.text.method.ScrollingMovementMethod;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.qixiang.bleskip_teacher.BLE.BLEService;
+import com.qixiang.bleskip_teacher.BLE.MyListener;
 import com.qixiang.bleskip_teacher.BLE.SendBle;
 import com.qixiang.bleskip_teacher.BLE.Tools;
 import com.qixiang.bleskip_teacher.Util.Utils;
@@ -45,7 +51,7 @@ import java.util.List;
  * Created by Administrator on 2018/7/28.
  */
 
-public class BleConnectActivity extends Activity implements View.OnClickListener{
+public class BleDataActivityCopy extends Activity implements View.OnClickListener{
 
     private final static int REQUEST_ENABLE_BT=2001;
     private BluetoothDevice theDevice;
@@ -53,6 +59,10 @@ public class BleConnectActivity extends Activity implements View.OnClickListener
     private boolean connected_flag;
     private boolean exit_activity = false;
     public String tmp,hex;
+    public boolean reveiveFlag = false;
+
+    public  byte theRandowData = 0;
+    public  byte[] theTwoByte = new byte[]{0x00,0x00};
 
         private BLEService.OnWriteOverCallback mOnWriteOverCallback = new BLEService.OnWriteOverCallback(){
 
@@ -116,17 +126,35 @@ public class BleConnectActivity extends Activity implements View.OnClickListener
         return new String(hexChars);
     }
 
-    String data = "";
+    String data = "",theReceiveData;
 
     int ppCount = 0;
     private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
 
         @Override
         public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
+            if(!reveiveFlag)
+                return;
 
             if(null == device.getName())
             {
-                //Tools.setLog("log1", device.getName()+"LeScanCallback..........LLL:");
+                if(identifySysID(scanRecord)){
+                    Tools.setLog("log1", "系统值匹配成功.......222222222222222222...LLL:");
+                    if(identifyRanData(scanRecord)){//匹配校验发送的随机数
+                        Tools.setLog("log1", "随机数匹配成功......22222222222222222222222222....LLL:");
+                        if(0x02 == (scanRecord[11] & 0x0F)){//  和0x0F校验 == 0
+                            Tools.setLog("log1", "和0x0F校验成功.....222222222222222222222222222222222.....LLL:");
+                            theTwoByte[0] =scanRecord[12];
+                            theTwoByte[1] =scanRecord[13];
+
+                            theReceiveData = bytesToHexFun3(scanRecord);
+                            myHandler.sendEmptyMessage(13141);
+                        }
+                    }
+                    theReceiveData = bytesToHexFun3(scanRecord);
+                    //myHandler.sendEmptyMessage(13141);
+                }
+                //
                 device.getUuids();
                 Tools.setLog("log1", device.getName()+"LeScanCallback..........ppp:\n"+ device.getUuids());
                 //myHandler.sendEmptyMessage(1314);
@@ -177,24 +205,50 @@ public class BleConnectActivity extends Activity implements View.OnClickListener
         }
     };
 
+
         int numcount=0;
+    int numcount2=0;
         private Handler myHandler = new Handler(){
         public void handleMessage(android.os.Message msg) {
             //Tools.setLog("log1", "myHandler.........."+msg.what);
             switch (msg.what) {
+                case 13141:
+                    Tools.setLog("log1", "..........................................................................13141");
+                    numcount2++;
+                    if(numcount2<2){
+                        stopSendData();
+                        theReveieData.setText(theReceiveData);
+
+                        theReveieTimes.setText("收到："+numcount2+"次");
+                        maxSendData(false);
+                    }
+
+                    break;
+                case 131415:
+                    Tools.setLog("log1", "............theNext.........."+msg.what);
+                    break;
                 case 111:
                     //Toast.makeText(MainActivity.this, "startActivityForResult..", Toast.LENGTH_SHORT).show();
                     //Intent intent = new Intent(MainActivity.this,VideoActivity.class);
                     //startActivityForResult(intent, 12);
                     break;
                 case 110:
-                    Toast.makeText(BleConnectActivity.this, "110............", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(BleDataActivityCopy.this, "广播成功（一次）............", Toast.LENGTH_SHORT).show();
                     break;
                 case 112:
-                    Toast.makeText(BleConnectActivity.this, "112.............", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(BleDataActivityCopy.this, "广播失败............", Toast.LENGTH_SHORT).show();
+                    break;
+                case 1110:
+                    Toast.makeText(BleDataActivityCopy.this, "持续广播成功............", Toast.LENGTH_SHORT).show();
+                    break;
+                case 11120:
+                    Toast.makeText(BleDataActivityCopy.this, "停止广播成功.............", Toast.LENGTH_SHORT).show();
+                    break;
+                case 11121:
+                    Toast.makeText(BleDataActivityCopy.this, "停止广播失败.............", Toast.LENGTH_SHORT).show();
                     break;
                 case 10:
-                    bindService(new Intent(BleConnectActivity.this,BLEService.class), connection, Context.BIND_AUTO_CREATE);
+                    bindService(new Intent(BleDataActivityCopy.this,BLEService.class), connection, Context.BIND_AUTO_CREATE);
                     break;
                 case 11:
                     if(Tools.mBleService != null)
@@ -202,17 +256,17 @@ public class BleConnectActivity extends Activity implements View.OnClickListener
                     break;
                 case 1313:
                     numcount++;
-                    thetr.setText(data+"  共"+numcount+"次");
-                    Toast.makeText(BleConnectActivity.this, "连接成功:"+data+" ", Toast.LENGTH_LONG).show();
+                    //thetr.setText(data+"  共"+numcount+"次");
+                    Toast.makeText(BleDataActivityCopy.this, "连接成功:"+data+" ", Toast.LENGTH_LONG).show();
                     break;
                 case 1314:
                     ppCount++;
-                    thetr.setText("sleep100ms 共:"+ppCount+"次");
+                    //thetr.setText("sleep100ms 共:"+ppCount+"次");
                     //Toast.makeText(BleConnectActivity.this, "连接成功:"+data+" ", Toast.LENGTH_LONG).show();
                     break;
                 case 1315:
                     ppCount++;
-                    thetr.setText("Setting 100ms 共:"+ppCount+"次");
+                    //thetr.setText("Setting 100ms 共:"+ppCount+"次");
                     //Toast.makeText(BleConnectActivity.this, "连接成功:"+data+" ", Toast.LENGTH_LONG).show();
                     break;
                 case 12:
@@ -220,11 +274,11 @@ public class BleConnectActivity extends Activity implements View.OnClickListener
                         Tools.mBleService.stopscanBle(mLeScanCallback);
                         Tools.mBleService.setOnWriteOverCallback(mOnWriteOverCallback);
                     }
-                    Toast.makeText(BleConnectActivity.this, "连接成功", Toast.LENGTH_LONG).show();
+                    Toast.makeText(BleDataActivityCopy.this, "连接成功", Toast.LENGTH_LONG).show();
                     Intent intent2 = new Intent("com.qixiang.blesuccess");
                     sendBroadcast(intent2);
 
-                    Intent intent = new Intent(BleConnectActivity.this,MainActivity.class);
+                    Intent intent = new Intent(BleDataActivityCopy.this,MainActivity.class);
                     startActivity(intent);
                     break;
                 case 122:
@@ -249,51 +303,139 @@ public class BleConnectActivity extends Activity implements View.OnClickListener
     };
     Animation myAnimation;
     private SendBle mSendBle;
-    TextView thetr;
+    TextView  theReveieTimes,theReveieData,tv_id,mTextStatus;
+    EditText et_SysID,et_SysID2,et_data;
+    ScrollView mScrollView;
+    Button btn_once,btn_more,btn_stop;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_bleconnect);
-
-
-        thetr = (TextView) findViewById(R.id.thrtittle);
+        setContentView(R.layout.activity_bledata);
 
         checkBluetoothPermission();
-
-        Log.e(Utils.TAG,"Bleconnectedactivity oncreate..............");
-
         bindService(new Intent(this,BLEService.class), connection, Context.BIND_AUTO_CREATE);
 
-        findViewById(R.id.btn_ble_jump).setOnClickListener(this);
-        //findViewById(R.id.btn_reset).setOnClickListener(this);
-        findViewById(R.id.btn_startAd).setOnClickListener(this);
+        //收到广播的次数统计
+        theReveieTimes  =  (TextView) findViewById(R.id.tv_times22);
+        //收到广播的数据部分
+        theReveieData  =  (TextView) findViewById(R.id.tv_receive_data);
 
+        scrollToBottom();
+
+        //校验位数值
+        tv_id =  (TextView) findViewById(R.id.tv_id);
+        //接收部系统值
+        et_SysID = (EditText) findViewById(R.id.et_systemid);
+
+        //发送部系统值和数据
+        et_SysID2 = (EditText) findViewById(R.id.et_systemid2);
+        et_data = (EditText) findViewById(R.id.et_data);
+
+        findViewById(R.id.btn_once).setOnClickListener(this);
+        findViewById(R.id.btn_more).setOnClickListener(this);
+        findViewById(R.id.btn_stop).setOnClickListener(this);
+
+        findViewById(R.id.btn_once).setEnabled(false);
+
+        findViewById(R.id.btn_reveive).setOnClickListener(this);
+        findViewById(R.id.btn_stop_reveive).setOnClickListener(this);
+
+        reveiveFlag = false;
+
+        mSendBle = new SendBle(this);
+
+
+        /*thetr = (TextView) findViewById(R.id.thrtittle);
         myAnimation = AnimationUtils.loadAnimation(this, R.anim.rotation1);
         findViewById(R.id.imageView111).startAnimation(myAnimation);
 
-        mSendBle = new SendBle(this);
+       ;*/
     }
-
+    private void scrollToBottom()
+    {
+        mScrollView.post(new Runnable()
+        {
+            public void run()
+            {
+                mScrollView.smoothScrollTo(0, mTextStatus.getBottom());
+            }
+        });
+    }
 public void backtomain(View view){
-        Intent intent = new Intent(BleConnectActivity.this,MainActivity.class);
+        Intent intent = new Intent(BleDataActivityCopy.this,MainActivity.class);
         startActivity(intent);
         //BleConnectActivity.this.finish();
 }
+    //校验系统ID
+    public boolean identifySysID(byte[] data){
+        byte[] byteData = toBytes("0201050319C1030716");
+
+        for(int i=0;i<byteData.length;i++){
+            if(!(byteData[i] == data[i]))
+                return false;
+        }
+        return true;
+    }
+    public boolean identifyRanData(byte[] data){
+
+        if(data.length<15){
+            Toast.makeText(BleDataActivityCopy.this, "返回参数异常了", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(data[10] != theRandowData)
+             return false;
+        else
+            return true;
+    }
+    public static String bytesToHexFun3(byte[] bytes) {
+        byte[] iData = new byte[6];
+        for (int i= 0;i<6;i++){
+            iData[i] = bytes[i+9];
+        }
+
+        StringBuilder buf = new StringBuilder(iData.length * 2);
+        for(byte b : iData) { // 使用String的format方法进行转换
+            buf.append(String.format("%02x", new Integer(b & 0xff)));
+        }
+
+        return buf.toString();
+    }
 
 private void InitBle(){
     BluetoothManager bManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
     BluetoothAdapter bAdapter = bManager.getAdapter();
     if(bAdapter == null){
-        Toast.makeText(BleConnectActivity.this, "not support", Toast.LENGTH_SHORT).show();
+        Toast.makeText(BleDataActivityCopy.this, "not support", Toast.LENGTH_SHORT).show();
         finish();
     }
     if (bAdapter.isEnabled()) {
-        bindService(new Intent(this,BleConnectActivity.class), connection, Context.BIND_AUTO_CREATE);
+        bindService(new Intent(this,BleDataActivityCopy.class), connection, Context.BIND_AUTO_CREATE);
     }else {
         bAdapter.enable();
     }
     setBroadcastReveiver();
 }
+
+    /**
+     * 将16进制字符串转换为byte[]
+     *
+     * @param str
+     * @return
+     */
+    public  byte[] toBytes(String str) {
+        if(str == null || str.trim().equals("")) {
+            return new byte[0];
+        }
+
+        byte[] bytes = new byte[str.length() / 2];
+        for(int i = 0; i < str.length() / 2; i++) {
+            String subStr = str.substring(i * 2, i * 2 + 2);
+            bytes[i] = (byte) Integer.parseInt(subStr, 16);
+        }
+
+        return bytes;
+    }
+
     ArrayList<String> unPermissionList;
     private void checkBluetoothPermission() {
         if (Build.VERSION.SDK_INT >= 23) {
@@ -307,29 +449,29 @@ private void InitBle(){
             unPermissionList = new ArrayList<String>();
             try {
                 for (int i = 0; i < mPermission.length; i++) {
-                    if (ContextCompat.checkSelfPermission(BleConnectActivity.this, mPermission[i]) != PackageManager.PERMISSION_GRANTED) {
+                    if (ContextCompat.checkSelfPermission(BleDataActivityCopy.this, mPermission[i]) != PackageManager.PERMISSION_GRANTED) {
                         unPermissionList.add(mPermission[i]);
                     }
                 }
                 for (int i = 0; i < mPermission.length; i++) {
-                    if (ContextCompat.checkSelfPermission(BleConnectActivity.this, "android.permission.ACCESS_COARSE_LOCATION") == PackageManager.PERMISSION_GRANTED) {
+                    if (ContextCompat.checkSelfPermission(BleDataActivityCopy.this, "android.permission.ACCESS_COARSE_LOCATION") == PackageManager.PERMISSION_GRANTED) {
                         if (isLocationEnabled()) {
 
                         }else {
-                            Toast.makeText(BleConnectActivity.this, "Please open the location switch.", Toast.LENGTH_LONG).show();
-                            Intent intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                            Toast.makeText(BleDataActivityCopy.this, "Please open the location switch.", Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                             startActivityForResult(intent, 0);
                             break;
                         }
                     }
                 }
             } catch (Exception e) {
-                Toast.makeText(BleConnectActivity.this, "Exception0:"+e.toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(BleDataActivityCopy.this, "Exception0:"+e.toString(), Toast.LENGTH_LONG).show();
             }
 
         }else {
             InitBle();
-            Toast.makeText(BleConnectActivity.this, "Init.............:", Toast.LENGTH_LONG).show();
+            Toast.makeText(BleDataActivityCopy.this, "Init.............:", Toast.LENGTH_LONG).show();
             return;
         }
         if (unPermissionList.isEmpty()) {
@@ -343,7 +485,7 @@ private void InitBle(){
                 String[] permissionStrings = unPermissionList.toArray(new String[unPermissionList.size()]);
                 ActivityCompat.requestPermissions(this, permissionStrings, 1);
             } catch (Exception e) {
-                Toast.makeText(BleConnectActivity.this, "Exception11:"+e.toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(BleDataActivityCopy.this, "Exception11:"+e.toString(), Toast.LENGTH_LONG).show();
             }
         }
 
@@ -386,11 +528,11 @@ private void InitBle(){
             if (permissions[i].equals("android.permission.ACCESS_COARSE_LOCATION")) {
                 if ((grantResults[i] ==0)) {
                     if(!isLocationEnabled()){
-                        Intent intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                         startActivityForResult(intent, 0);
                     }else {
                         InitBle();
-                        Toast.makeText(BleConnectActivity.this, "Init.............:", Toast.LENGTH_LONG).show();
+                        Toast.makeText(BleDataActivityCopy.this, "Init.............:", Toast.LENGTH_LONG).show();
                     }
                 }else {
                     finish();
@@ -407,13 +549,13 @@ private void InitBle(){
             if (isLocationEnabled()) {
                 checkBluetoothPermission();
             }else {
-                Toast.makeText(BleConnectActivity.this, "Please open the location switch.", Toast.LENGTH_LONG).show();
+                Toast.makeText(BleDataActivityCopy.this, "Please open the location switch.", Toast.LENGTH_LONG).show();
                 new Handler().postDelayed(new Runnable() {
 
                     @Override
                     public void run() {
                         // TODO Auto-generated method stub
-                        Intent intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                         startActivityForResult(intent, 0);
                     }
                 }, 1000);
@@ -443,6 +585,23 @@ private void InitBle(){
     private BluetoothReceiver bluetoothReceiver = null;
 
 
+
+
+public MyListener listener = new MyListener() {
+    @Override
+    public void readData(byte[] var1, String var2) {
+
+    }
+
+    @Override
+    public void onSendStatus(Boolean var1) {
+        Tools.setLog("log1", "..........................onSendStatus......");
+        if (var1)
+            Toast.makeText(BleDataActivityCopy.this, "...........成功...............", Toast.LENGTH_SHORT).show();
+        else
+            Toast.makeText(BleDataActivityCopy.this, "...........失败...............", Toast.LENGTH_SHORT).show();
+    }
+};
     public class BluetoothReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context arg0, Intent intent) {
@@ -477,7 +636,7 @@ private void InitBle(){
                 switch(blueState){
                     case BluetoothAdapter.STATE_ON:
                         //开始扫描
-                        bindService(new Intent(BleConnectActivity.this,BleConnectActivity.class), connection, Context.BIND_AUTO_CREATE);
+                        bindService(new Intent(BleDataActivityCopy.this,BleDataActivityCopy.class), connection, Context.BIND_AUTO_CREATE);
                         break;
                 }
 
@@ -489,10 +648,8 @@ private void InitBle(){
     protected void onDestroy() {
         // TODO Auto-generated method stub
         super.onDestroy();
-
-        Log.e(Utils.TAG,"onDestroy..............");
         exit_activity = true;
-        unbindService(connection);
+        //unbindService(connection);
     }
 
      public byte[] hexToBytes(String hexString) {
@@ -603,23 +760,145 @@ private void InitBle(){
         }
         return stringBuilder.toString();
     }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.btn_ble_jump:
-                Tools.mBleService.characterWrite1.setValue(hexToBytes("06241112131410"));
-                Tools.mBleService.mBluetoothGatt.writeCharacteristic(Tools.mBleService.characterWrite1);
-                break;
-            /*case R.id.btn_reset:
-                ppCount=0;
-                numcount = 0;
-                thetr.setText("0");
-                break;*/
-            case R.id.btn_startAd:
+            case R.id.btn_once:
+
                 initData();
-                //boolean flag = mSendBle.d(sendstr, 3,myHandler);
+                boolean flag = mSendBle.startSendOnce(command_, 3,"dd",myHandler);
                 break;
+            case R.id.btn_more:
+                //initData();
+                //getIDValue();
+                //String data = et_data.getText().toString();
+                //data="0d2be7f7-e6d6-4f48-a4bc-e521f9fd8eff";
+
+                maxSendData(true);
+
+
+                break;
+            case R.id.btn_stop:
+                stopSendData();
+                break;
+            case R.id.btn_reveive:
+                reveiveFlag = true;
+                break;
+            case R.id.btn_stop_reveive:
+                break;
+            /*case R.id.btn_stop:
+                break;
+            case R.id.btn_stop:
+                break;
+            case R.id.btn_stop:
+                break;
+            case R.id.btn_stop:
+                break;*/
         }
     }
+
+    private void stopSendData() {
+        findViewById(R.id.btn_stop).setEnabled(false);
+        findViewById(R.id.btn_more).setEnabled(true);
+        mSendBle.stopSend();
+    }
+
+    public void maxSendData(boolean theFlag){
+        findViewById(R.id.btn_more).setEnabled(false);
+        findViewById(R.id.btn_stop).setEnabled(true);
+        String inString = "19FF100100000000";
+        //String data = et_data.getText().toString();
+            boolean flag1 = mSendBle.startSendMore(getIDValue(inString,theFlag), 3,myHandler);
+            mSendBle.setListener(listener);
+
+    }
+    //得到校验结果（存在输入风险 未筛选非法字符）
+    private String getIDValue(String data,boolean flag) {
+
+        //String s="123bf";
+        String regex="^[A-Fa-f0-9]+$";
+        if(!data.matches(regex) || (data.length()%2 !=0)){
+            Toast.makeText(BleDataActivityCopy.this, "字符串不是十六进制字符串", Toast.LENGTH_SHORT).show();
+            return "";
+        }
+
+        if(data.length() != 16){
+            Toast.makeText(BleDataActivityCopy.this, "数据长度异常..", Toast.LENGTH_SHORT).show();
+            return "";
+        }
+        byte[] theByte = toBytes(data);
+
+        if(flag){//代表第一发送
+            theRandowData = getRandomData();
+            theByte[3] = theRandowData;
+        }else {
+            theByte[2] = 0x12;
+            theByte[3] = theTwoByte[0];
+            theByte[4] = theTwoByte[1];
+        }
+
+        //将随机数整合到数组中，并显示在view中
+        String theString = byteArrayToHexStr(theByte);
+
+        SpannableStringBuilder style=new SpannableStringBuilder(theString);
+        //str代表要显示的全部字符串
+        style.setSpan(new ForegroundColorSpan(Color.RED),6,8, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        //３代表从第几个字符开始变颜色，注意第一个字符序号是０．
+        //８代表变色到第几个字符．
+        et_data.setText(style);
+
+        //颠倒数组顺序
+        for (int i=0;i<theByte.length/2;i++){
+            byte temp = theByte[i];
+            theByte[i] = theByte[7-i];
+            theByte[7-i] = temp;
+        }
+        byte theResult = 0;
+        //依次"亦或"九个byte
+        for (int i=0;i<theByte.length;i++){
+            theResult = (byte)(theByte[i]^theResult);
+        }
+        theResult = (byte)(theResult^0x5A);
+        tv_id.setText("校验值：\n"+theResult);
+        //组织新的数据 附加校验位
+        byte[] newByte = new byte[theByte.length+1];
+        for (int i=0;i<newByte.length;i++){
+            if(i == 0)
+                newByte[i] = theResult;
+            else
+                newByte[i] = theByte[i-1];
+        }
+
+        String stringData = bytesToHexString(newByte);
+        return formData(stringData);
+    }
+
+    public byte getRandomData(){
+        int n = (int)(1+Math.random()*(253));
+
+        byte[] b = new byte[4];
+        b[0] = (byte)(n & 0xff);
+
+        return b[0];
+    }
+   /* public String getRandomData(){
+        int n = (int)(1+Math.random()*(253));
+        String[] hexArray = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"};
+
+        if (n < 0) {
+            n = n + 256;
+        }
+        int d1 = n / 16;
+        int d2 = n % 16;
+        return hexArray[d1] + hexArray[d2];
+    }*/
+    public String formData(String stringData){
+        if(stringData.length() != 18)
+            Toast.makeText(BleDataActivityCopy.this, "数据长度异常2..", Toast.LENGTH_SHORT).show();
+
+        return stringData.substring(0,8)+"-"+stringData.substring(8,12)+"-"+stringData.substring(12,16)+"-"+stringData.substring(16);
+    }
+
 
 }

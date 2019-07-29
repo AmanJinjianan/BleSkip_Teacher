@@ -13,6 +13,9 @@
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/logo"
@@ -26,10 +29,7 @@
 
         </activity>
         <activity android:name=".EighteenMissionActivity" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
         </activity>
         <activity android:name=".StudentListActivity" />
         <activity android:name=".StudentInfoForApplyActivity">
@@ -51,8 +51,18 @@
         <activity android:name=".Test3Char"></activity>
 
         <activity
+            android:name=".BleDataActivity"
+            android:launchMode="singleInstance">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".BleConnectActivity"
-            android:launchMode="singleInstance"></activity>
+            android:launchMode="singleInstance">
+
+        </activity>
         <activity android:name=".LoginActivity"
             android:launchMode="singleInstance">
         </activity>
