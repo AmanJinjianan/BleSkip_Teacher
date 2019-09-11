@@ -224,7 +224,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:enabled="false"
-            android:text="广播一次"></Button>
+            android:text="收广播/停收广播"></Button>
         <Button
             android:layout_weight="1"
             android:id="@+id/btn_more"
