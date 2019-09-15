@@ -67,6 +67,8 @@ public class BleDataActivity extends Activity implements View.OnClickListener,Vi
 
     public  byte theRandowData = 0;
     public  byte[] theTwoByte = new byte[]{0x00,0x00};
+
+    //保存下位机设备ID
     public byte theOneByte=0;
 
         private BLEService.OnWriteOverCallback mOnWriteOverCallback = new BLEService.OnWriteOverCallback(){
@@ -147,19 +149,21 @@ public class BleDataActivity extends Activity implements View.OnClickListener,Vi
 
             if(identifySysID(scanRecord)){
                 String ddString = Utils.toHexString(scanRecord);
-                Tools.setLog("log1", "系统值匹配成功..........LLL:"+numcount2+"\n       ddString:"+ddString+"   remainString:"+remainString);
-                theReamainDataString = "系统值匹配成功..........LLL:"+numcount2;
-                myHandler.sendEmptyMessage(131415);
                 if (remainString.equals(ddString)){
                     return;
                 }
                 remainString  = ddString;
-                boolean gg = identifyRanData(scanRecord);
-                if(gg){//匹配校验发送的随机数
-                    Tools.setLog("log1", "随机数匹配成功..........:"+numcount2);
-                    theReamainDataString = "随机数匹配成功..........:"+numcount2;
+
+                Tools.setLog("log1", "系统值匹配成功..........LLL:"+recycleCount+"\n       ddString:"+ddString+"   remainString:"+remainString);
+                theReamainDataString = "系统值匹配成功..........LLL:"+recycleCount;
+                myHandler.sendEmptyMessage(131415);
+
+
+                if(identifyRanData(scanRecord)){//匹配校验发送的随机数
+                    Tools.setLog("log1", "随机数匹配成功..........:"+recycleCount);
+                    theReamainDataString = "随机数匹配成功..........:"+recycleCount;
                     myHandler.sendEmptyMessage(131415);
-                    if(numcount2 ==1){//在第一个“发收周期”
+                    if(recycleCount ==1){//在第一个“发收周期”
                         theOneByte =scanRecord[13];
                         theReceiveData = bytesToHexFun3(scanRecord);
                         myHandler.sendEmptyMessage(13141);
@@ -170,8 +174,8 @@ public class BleDataActivity extends Activity implements View.OnClickListener,Vi
             {
             }else{
                 Message m = new Message();
-                m.what = 1234321;
                 Bundle b = new Bundle();
+                m.what = 1234321;
                 b.putString("name",device.getName());
                 m.setData(b);
                 myHandler.sendMessage(m);
@@ -204,9 +208,7 @@ public class BleDataActivity extends Activity implements View.OnClickListener,Vi
             }
         }
     };
-
-
-        int numcount=0;
+    
 
         private  Handler myHander2 = new Handler(){
             @Override
@@ -214,25 +216,25 @@ public class BleDataActivity extends Activity implements View.OnClickListener,Vi
                 switch (msg.what){
                     case 456:
                         scrollToBottom("前-->");
-                        maxSendData("0000000000000000",(byte)0x01);
+                        maxSendData("001A000000000000",(byte)0x01);
                         break;
                     case 457:
                         scrollToBottom("后-->");
-                        maxSendData("0000000000000000",(byte)0x02);
+                        maxSendData("002A000000000000",(byte)0x02);
                         break;
                     case 458:
                         scrollToBottom("左-->");
-                        maxSendData("0000000000000000",(byte)0x03);
+                        maxSendData("003A000000000000",(byte)0x03);
                         break;
                     case 459:
                         scrollToBottom("右-->");
-                        maxSendData("0000000000000000",(byte)0x04);
+                        maxSendData("004A000000000000",(byte)0x04);
                         break;
                 }
             }
         };
-        //代表在第几个“发收周期”，初始为"1"
-    int numcount2=1;
+    //代表在第几个“发收周期”，初始为"1"（一发一收代表一个周期）
+    int recycleCount=1;
     String theReamainDataString = "";
         private Handler myHandler = new Handler(){
         public void handleMessage(android.os.Message msg) {
@@ -241,17 +243,18 @@ public class BleDataActivity extends Activity implements View.OnClickListener,Vi
                 case 13141:
                     Tools.setLog("log1", "..........................................................................13141");
                     //进行周期递增
-                        numcount2++;
-                    if(numcount2 >= 2){
-                        scrollToBottom("连接完成！");
+                        recycleCount++;
+                    if(recycleCount >= 2){
+                        scrollToBottom("连接完成！" + recycleCount);
+                        reveiveFlag = false;
                         Toast.makeText(BleDataActivity.this, "连上了...", Toast.LENGTH_LONG).show();
                         myHandler.sendEmptyMessage(122);
                         btn_once.setEnabled(true);
                         setFourBtnEnable(true);
                     }else {
                         theReveieData.setText(theReceiveData);
-                        theReveieTimes.setText("第"+numcount2+"个周期");
-                        scrollToBottom("第"+numcount2+"个周期");
+                        theReveieTimes.setText("第"+recycleCount+"个周期");
+                        scrollToBottom("第"+recycleCount+"个周期");
                         maxSendData("0000000000000000",(byte)0xFF);
                     }
                     break;
@@ -292,8 +295,6 @@ public class BleDataActivity extends Activity implements View.OnClickListener,Vi
                     //maxSendData("0000810000000000",(byte)0xFF);
                     break;
                 case 1313:
-                    numcount++;
-                    //thetr.setText(data+"  共"+numcount+"次");
                     Toast.makeText(BleDataActivity.this, "连接成功:"+data+" ", Toast.LENGTH_LONG).show();
                     break;
                 case 1314:
@@ -335,19 +336,19 @@ public class BleDataActivity extends Activity implements View.OnClickListener,Vi
                     break;
                 case 456:
                     scrollToBottom("前-->");
-                    maxSendData("0000000000000000",(byte)0x01);
+                    maxSendData("00001A0000000000",(byte)0x01);
                     break;
                 case 457:
                     scrollToBottom("后-->");
-                    maxSendData("0000000000000000",(byte)0x02);
+                    maxSendData("00002A0000000000",(byte)0x02);
                     break;
                 case 458:
                     scrollToBottom("左-->");
-                    maxSendData("0000000000000000",(byte)0x03);
+                    maxSendData("00003A0000000000",(byte)0x03);
                     break;
                 case 459:
                     scrollToBottom("右-->");
-                    maxSendData("0000000000000000",(byte)0x04);
+                    maxSendData("00004A0000000000",(byte)0x04);
                     break;
 
                 default:
@@ -469,10 +470,13 @@ public void backtomain(View view){
             return false;
         }
 
-        if((data[10] & 0xFC) == oRandowData)
-            return false;
-        else
+
+        int randomValue = Integer.valueOf(data[10] >> 2);
+        Tools.setLog("log1", "randomValue..........:"+randomValue  +"  oRandowData:"+oRandowData);
+        if(randomValue == oRandowData || (oRandowData-randomValue == 64))//如果相等或互补
             return true;
+        else
+            return false;
 
     }
     public static String bytesToHexFun3(byte[] bytes) {
@@ -888,19 +892,19 @@ public MyListener listener = new MyListener() {
                 break;
             case R.id.btn_up:
                 scrollToBottom("前-->");
-                maxSendData("0000000000000000",(byte)0x01);
+                maxSendData("00001A0000000000",(byte)0x01);
                 break;
             case R.id.btn_down:
                 scrollToBottom("后-->");
-                maxSendData("0000000000000000",(byte)0x02);
+                maxSendData("00002A0000000000",(byte)0x02);
                 break;
             case R.id.btn_left:
                 scrollToBottom("左-->");
-                maxSendData("0000000000000000",(byte)0x03);
+                maxSendData("00003A0000000000",(byte)0x03);
                 break;
             case R.id.btn_right:
                 scrollToBottom("右-->");
-                maxSendData("0000000000000000",(byte)0x04);
+                maxSendData("00004A0000000000",(byte)0x04);
                 break;
         }
     }
@@ -1037,7 +1041,7 @@ public MyListener listener = new MyListener() {
     //长按标识 false :代表长按事件发生
 private Boolean longlongFlag = true;
     public void maxSendData(String realData,byte theDirection){
-        if(numcount2 != 1 && longlongFlag)
+        if(recycleCount != 1 && longlongFlag)
             stopSendData();
         findViewById(R.id.btn_more).setEnabled(false);
         findViewById(R.id.btn_stop).setEnabled(true);
@@ -1060,7 +1064,8 @@ private Boolean longlongFlag = true;
         }
         byte[] theByte = toBytes(theData);
 
-        switch (numcount2)
+        Tools.setLog("log1","recycleCount:::::::::::::::::::::::::::::："+recycleCount+ "  data:"+data);
+        switch (recycleCount)
         {
             case 1://代表第一发送
                 //得到随机数
@@ -1070,10 +1075,13 @@ private Boolean longlongFlag = true;
                 //第二次发送
                 theByte[0] = getSecondData();
                 theByte[1] = theOneByte;
-                theByte[2] = 0x1A;
+                recycleCount++;
+                //theByte[2] = 0x1A;
                 break;
             default://非配对阶段
-                theByte = getDirectionData(derectionFlag);
+                //theByte = getDirectionData(derectionFlag);
+                theByte[0] = getSecondData();
+                theByte[1] = theOneByte;
                 break;
         }
         //将随机数整合到数组中，并显示在view中
