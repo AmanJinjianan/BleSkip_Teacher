@@ -67,6 +67,7 @@ public class BleDataActivity extends Activity implements View.OnClickListener,Vi
 
     public  byte theRandowData = 0;
     public  byte[] theTwoByte = new byte[]{0x00,0x00};
+    public byte theOneByte=0;
 
         private BLEService.OnWriteOverCallback mOnWriteOverCallback = new BLEService.OnWriteOverCallback(){
 
@@ -153,28 +154,15 @@ public class BleDataActivity extends Activity implements View.OnClickListener,Vi
                     return;
                 }
                 remainString  = ddString;
-                if(identifyRanData(scanRecord)){//匹配校验发送的随机数
+                boolean gg = identifyRanData(scanRecord);
+                if(gg){//匹配校验发送的随机数
                     Tools.setLog("log1", "随机数匹配成功..........:"+numcount2);
                     theReamainDataString = "随机数匹配成功..........:"+numcount2;
                     myHandler.sendEmptyMessage(131415);
                     if(numcount2 ==1){//在第一个“发收周期”
-                        if(0x02 == (scanRecord[11] & 0x0F)){//  和0x0F校验 == 2
-                            Tools.setLog("log1", "和0x0F校验成功.....222222222222222222222222222222222.....LLL:"+numcount2);
-                            theTwoByte[0] =scanRecord[12];
-                            theTwoByte[1] =scanRecord[13];
-
-                            theReceiveData = bytesToHexFun3(scanRecord);
-                            myHandler.sendEmptyMessage(13141);
-                        }
-                    }else if(numcount2 == 2){
-                        if(0x03 == (scanRecord[11] & 0x0F)){//  和0x0F校验 == 3
-                            Tools.setLog("log1", "和0x0F校验成功.....222222222222222222222222222222222.....LLL:"+numcount2);
-
-                            theReceiveData = bytesToHexFun3(scanRecord);
-                            myHandler.sendEmptyMessage(13141);
-                        }
-                    }else {
-                        //Tools.setLog("log1", "收到第三次.....222222222222222222222222222222222.....LLL:"+numcount2);
+                        theOneByte =scanRecord[13];
+                        theReceiveData = bytesToHexFun3(scanRecord);
+                        myHandler.sendEmptyMessage(13141);
                     }
                 }
             }
@@ -254,7 +242,7 @@ public class BleDataActivity extends Activity implements View.OnClickListener,Vi
                     Tools.setLog("log1", "..........................................................................13141");
                     //进行周期递增
                         numcount2++;
-                    if(numcount2 >= 3){
+                    if(numcount2 >= 2){
                         scrollToBottom("连接完成！");
                         Toast.makeText(BleDataActivity.this, "连上了...", Toast.LENGTH_LONG).show();
                         myHandler.sendEmptyMessage(122);
@@ -264,7 +252,7 @@ public class BleDataActivity extends Activity implements View.OnClickListener,Vi
                         theReveieData.setText(theReceiveData);
                         theReveieTimes.setText("第"+numcount2+"个周期");
                         scrollToBottom("第"+numcount2+"个周期");
-                        maxSendData("19FF100100000000",(byte)0xFF);
+                        maxSendData("0000000000000000",(byte)0xFF);
                     }
                     break;
                 case 131415:
@@ -300,6 +288,8 @@ public class BleDataActivity extends Activity implements View.OnClickListener,Vi
                 case 11:
                     if(Tools.mBleService != null)
                         Tools.mBleService.scanBle(mLeScanCallback);
+                    //Toast.makeText(BleDataActivity.this, "0000810000000000", Toast.LENGTH_LONG).show();
+                    //maxSendData("0000810000000000",(byte)0xFF);
                     break;
                 case 1313:
                     numcount++;
@@ -438,7 +428,6 @@ public class BleDataActivity extends Activity implements View.OnClickListener,Vi
 
         mSendBle = new SendBle(this);
 
-
         /*thetr = (TextView) findViewById(R.id.thrtittle);
         myAnimation = AnimationUtils.loadAnimation(this, R.anim.rotation1);
         findViewById(R.id.imageView111).startAnimation(myAnimation);
@@ -472,6 +461,7 @@ public void backtomain(View view){
         }
         return true;
     }
+
     public boolean identifyRanData(byte[] data){
 
         if(data.length<15){
@@ -479,10 +469,11 @@ public void backtomain(View view){
             return false;
         }
 
-        if(data[10] != theRandowData)
-             return false;
+        if((data[10] & 0xFC) == oRandowData)
+            return false;
         else
             return true;
+
     }
     public static String bytesToHexFun3(byte[] bytes) {
         byte[] iData = new byte[6];
@@ -884,7 +875,7 @@ public MyListener listener = new MyListener() {
                 //getIDValue();
                 //String data = et_data.getText().toString();
                 //data="0d2be7f7-e6d6-4f48-a4bc-e521f9fd8eff";
-                maxSendData("19FF100100000000",(byte)0xFF);
+                maxSendData("0000810000000000",(byte)0xFF);
                 break;
             case R.id.btn_stop:
                 stopSendData();
@@ -1059,6 +1050,7 @@ private Boolean longlongFlag = true;
             mSendBle.setListener(listener);
         }
     }
+
     //得到校验结果（存在输入风险 未严格筛选非法字符）
     private String getIDValue(String data,byte derectionFlag) {
         //非法字符校验
@@ -1072,23 +1064,20 @@ private Boolean longlongFlag = true;
         {
             case 1://代表第一发送
                 //得到随机数
-                theRandowData = getRandomData();
-                theByte[3] = theRandowData;
+                theByte[0] = getSecondData();
                 break;
             case 2:
-                //得到随机数
-                theRandowData = getRandomData();
-                theByte[2] = 0x12;
-                theByte[3] = theTwoByte[0];
-                theByte[4] = theTwoByte[1];
-                theByte[5] = theRandowData;
+                //第二次发送
+                theByte[0] = getSecondData();
+                theByte[1] = theOneByte;
+                theByte[2] = 0x1A;
                 break;
             default://非配对阶段
                 theByte = getDirectionData(derectionFlag);
                 break;
         }
         //将随机数整合到数组中，并显示在view中
-        String theString = byteArrayToHexStr(theByte);
+        //String theString = byteArrayToHexStr(theByte);
 
        /* //Tools.setLog("log1","最终出口数据："+theString);
         SpannableStringBuilder style=new SpannableStringBuilder(theString);
@@ -1138,17 +1127,26 @@ private Boolean longlongFlag = true;
         return data;
     }
 
-    public byte getRandomData(){
-        int n=0;
-        if(numcount2 == 1){//true :第一次发送特定随机数
-            n = (int)(1+Math.random()*(253));
-        }else if(numcount2 == 2){
-            n = (int)(1+Math.random()*(94));
+    boolean mgFlag= true;
+    byte[] df;
+    byte windowNum =0;
+    int oRandowData=0;
+    //6位随机数+2位窗口号
+    public byte getSecondData(){
+        if(mgFlag){
+            mgFlag = false;
+            oRandowData = (int)(1+Math.random()*(62));
+            df=Utils.intToButeArray(oRandowData);
         }
-        byte[] b = new byte[4];
-        b[0] = (byte)(n & 0xff);
-
-        return b[0];
+        if(df != null){
+            windowNum++;
+            if(windowNum>3)
+                windowNum=0;
+            return (byte)(df[1]*4 + windowNum);
+        }else {
+            Toast.makeText(BleDataActivity.this, "窗口数产生异常了", Toast.LENGTH_SHORT).show();
+            return 0;
+        }
     }
    /* public String getRandomData(){
         int n = (int)(1+Math.random()*(253));
