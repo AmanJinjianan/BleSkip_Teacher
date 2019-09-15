@@ -80,7 +80,7 @@
             android:text="断开连接"></Button>
     </LinearLayout>
     <LinearLayout
-        android:layout_weight="4"
+        android:layout_weight="5"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="horizontal">
@@ -94,6 +94,7 @@
                 android:id="@+id/btn_reveive11"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
+                android:background="@drawable/btn_left"
                 android:text="button1"></Button>
             <Button
                 android:layout_weight="1"
@@ -115,10 +116,9 @@
                 android:text="button2"></Button>
         </LinearLayout>
         <RelativeLayout
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-           >
+            android:layout_height="match_parent">
 
             <Button
                 android:id="@+id/btn_up"
@@ -127,35 +127,34 @@
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:enabled="false"
-                android:text="Up(前)" />
+                android:text="Up( 前 )" />
 
             <Button
                 android:id="@+id/btn_left"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/btn_right"
                 android:layout_alignParentStart="true"
-                android:layout_below="@+id/btn_up"
                 android:enabled="false"
-                android:text="LEFT" />
+                android:text="LEFT（ 左 ）" />
 
             <Button
                 android:id="@+id/btn_right"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/btn_left"
-                android:layout_alignBottom="@+id/btn_left"
-                android:layout_toEndOf="@+id/btn_left"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@+id/btn_down"
                 android:enabled="false"
-                android:text="RIGHT" />
+                android:text="RIGHT（ 右 ）" />
 
             <Button
                 android:id="@+id/btn_down"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
                 android:layout_alignStart="@+id/btn_up"
-                android:layout_below="@+id/btn_left"
                 android:enabled="false"
-                android:text="down（后）" />
+                android:text="down（ 后 ）" />
         </RelativeLayout>
     </LinearLayout>
     <TextView
@@ -224,12 +223,13 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:enabled="false"
-            android:text="收广播/停收广播"></Button>
+            android:text="/停"></Button>
         <Button
             android:layout_weight="1"
             android:id="@+id/btn_more"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+
             android:text="持续广播"></Button>
         <Button
             android:layout_weight="1"

@@ -5,14 +5,11 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
@@ -25,58 +22,52 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:launchMode="singleTask">
-
-        </activity>
-        <activity android:name=".EighteenMissionActivity" >
-
-        </activity>
+            android:launchMode="singleTask"></activity>
+        <activity android:name=".EighteenMissionActivity"></activity>
         <activity android:name=".StudentListActivity" />
         <activity android:name=".StudentInfoForApplyActivity">
             <intent-filter>
                 <action android:name="com.qixiang.bleskip.android_intent" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity android:name=".StudentDetailInfoActivity">
             <intent-filter>
                 <action android:name="com.qixiang.bleskip.detailinfo" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".StuDetailForTeachActivity"></activity>
-        <activity android:name=".GameResultActivity"></activity>
-        <activity android:name=".TeachGoingActivity"></activity>
-        <activity android:name=".SQLiteActivity"></activity>
-        <activity android:name=".Test3Char"></activity>
-
+        <activity android:name=".StuDetailForTeachActivity" />
+        <activity android:name=".GameResultActivity" />
+        <activity android:name=".TeachGoingActivity" />
+        <activity android:name=".SQLiteActivity" />
+        <activity android:name=".Test3Char" />
         <activity
             android:name=".BleDataActivity"
             android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".BleConnectActivity"
-            android:launchMode="singleInstance">
-
-        </activity>
-        <activity android:name=".LoginActivity"
-            android:launchMode="singleInstance">
-        </activity>
+            android:launchMode="singleInstance"></activity>
         <activity
-        android:name=".wxapi.WXEntryActivity"
-        android:label="@string/app_name"
-         android:exported="true"
-        android:theme="@style/AppTheme.NoActionBar">
-
-    </activity>
-
+            android:name=".LoginActivity"
+            android:launchMode="singleInstance"></activity>
+        <activity
+            android:name=".wxapi.WXEntryActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
 
         <service android:name=".BLE.BLEService" />
 
+        <activity android:name=".ControllerActivity"></activity>
     </application>
 
 </manifest>

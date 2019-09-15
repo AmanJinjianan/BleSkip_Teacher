@@ -208,31 +208,6 @@ public class BleDataActivity extends Activity implements View.OnClickListener,Vi
             }
         }
     };
-    
-
-        private  Handler myHander2 = new Handler(){
-            @Override
-            public void handleMessage(Message msg) {
-                switch (msg.what){
-                    case 456:
-                        scrollToBottom("前-->");
-                        maxSendData("001A000000000000",(byte)0x01);
-                        break;
-                    case 457:
-                        scrollToBottom("后-->");
-                        maxSendData("002A000000000000",(byte)0x02);
-                        break;
-                    case 458:
-                        scrollToBottom("左-->");
-                        maxSendData("003A000000000000",(byte)0x03);
-                        break;
-                    case 459:
-                        scrollToBottom("右-->");
-                        maxSendData("004A000000000000",(byte)0x04);
-                        break;
-                }
-            }
-        };
     //代表在第几个“发收周期”，初始为"1"（一发一收代表一个周期）
     int recycleCount=1;
     String theReamainDataString = "";
@@ -245,9 +220,10 @@ public class BleDataActivity extends Activity implements View.OnClickListener,Vi
                     //进行周期递增
                         recycleCount++;
                     if(recycleCount >= 2){
-                        scrollToBottom("连接完成！" + recycleCount);
+                        scrollToBottom("连接完成！" + recycleCount+" "+Utils.toHexString(new byte[]{theOneByte}));
                         reveiveFlag = false;
-                        Toast.makeText(BleDataActivity.this, "连上了...", Toast.LENGTH_LONG).show();
+                        Toast.makeText(BleDataActivity.this, "连上了..."+Utils.toHexString(new byte[]{theOneByte}), Toast.LENGTH_LONG).show();
+                        maxSendData("0000000000000000",(byte)0x01);
                         myHandler.sendEmptyMessage(122);
                         btn_once.setEnabled(true);
                         setFourBtnEnable(true);
@@ -350,7 +326,10 @@ public class BleDataActivity extends Activity implements View.OnClickListener,Vi
                     scrollToBottom("右-->");
                     maxSendData("00004A0000000000",(byte)0x04);
                     break;
-
+                case 4600:
+                    scrollToBottom("All-->");
+                    maxSendData("0000"+Utils.toHexString(dataTwoByte)+"00000000",(byte)0x04);
+                    break;
                 default:
                     break;
             }
@@ -405,11 +384,10 @@ public class BleDataActivity extends Activity implements View.OnClickListener,Vi
         btn_down = (Button) findViewById(R.id.btn_down);
         btn_left = (Button) findViewById(R.id.btn_left);
         btn_right = (Button) findViewById(R.id.btn_right);
-        btn_up.setOnClickListener(this);
-
-        btn_down.setOnClickListener(this);
-        btn_left.setOnClickListener(this);
-        btn_right.setOnClickListener(this);
+        //btn_up.setOnClickListener(this);
+        //btn_down.setOnClickListener(this);
+        //btn_left.setOnClickListener(this);
+        //btn_right.setOnClickListener(this);
 
         btn_up.setOnLongClickListener(this);
         btn_down.setOnLongClickListener(this);
@@ -908,140 +886,105 @@ public MyListener listener = new MyListener() {
                 break;
         }
     }
-
-    boolean threadFlag = false;
-    int dedeFlag = 0;
     class MyTimerTask extends TimerTask{
         public int MyFlag = 0;
         @Override
         public void run() {
-            longlongFlag = false;
-            switch (MyFlag){
-                case 1: myHandler.sendEmptyMessage(456); break;
-                case 2: myHandler.sendEmptyMessage(457); break;
-                case 3: myHandler.sendEmptyMessage(458); break;
-                case 4: myHandler.sendEmptyMessage(459); break;
-            }
+            myHandler.sendEmptyMessage(4600);
+//            switch (MyFlag){
+//                case 1: myHandler.sendEmptyMessage(456); break;
+//                case 2: myHandler.sendEmptyMessage(457); break;
+//                case 3: myHandler.sendEmptyMessage(458); break;
+//                case 4: myHandler.sendEmptyMessage(459); break;
+//            }
         }
     }
     MyTimerTask mt1,mt2,mt3,mt4;
     Timer timer1,timer2,timer3,timer4;
     @Override
     public boolean onLongClick(View v) {
-
-        switch (v.getId()){
-            case R.id.btn_up:
-                dedeFlag = 1;
-                timer1=new Timer();
-                mt1 = new MyTimerTask();
-                mt1.MyFlag = 1;
-                timer1.schedule(mt1,0,200);
-                break;
-            case R.id.btn_down:
-                dedeFlag = 2;
-                timer2=new Timer();
-                mt2 = new MyTimerTask();
-                mt2.MyFlag = 2;
-                timer2.schedule(mt2,0,200);
-                break;
-            case R.id.btn_left:
-                dedeFlag = 3;
-                timer3=new Timer();
-                mt3 = new MyTimerTask();
-                mt3.MyFlag = 3;
-                timer3.schedule(mt3,0,200);
-                break;
-            case R.id.btn_right:
-                dedeFlag = 4;
-                timer4=new Timer();
-                mt4 = new MyTimerTask();
-                mt4.MyFlag = 4;
-                timer4.schedule(mt4,0,200);
-                break;
-        }
         //threadFlag = true;
         return false;
     }
 
+    byte[] dataTwoByte = new byte[2];
     private View.OnTouchListener MyTai = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             if(event.getAction()==MotionEvent.ACTION_CANCEL || event.getAction()==MotionEvent.ACTION_UP){
-                longlongFlag = true;
+                Toast.makeText(BleDataActivity.this, "UP", Toast.LENGTH_SHORT).show();
                 switch (v.getId()){
                     case R.id.btn_up:
+                        dataTwoByte[0] = 0;
                         if(timer1 != null){
                             timer1.cancel();
                             stopSendData();
                         }
                         break;
                     case R.id.btn_down:
+                        dataTwoByte[0] = 0;
                         if(timer2 != null){
                             timer2.cancel();
                             stopSendData();
                         }
                         break;
                     case R.id.btn_left:
+                        dataTwoByte[1] = 0;
                         if(timer3 != null){
                             timer3.cancel();
                             stopSendData();
                         }break;
                     case R.id.btn_right:
+                        dataTwoByte[1] = 0;
                         if(timer4 != null){
                             timer4.cancel();
                             stopSendData();
                         }break;
                 }
-                //threadFlag = false;
-                //Toast.makeText(BleDataActivity.this,"抬起了" ,Toast.LENGTH_SHORT).show();
+            } else  if(event.getAction()==MotionEvent.ACTION_DOWN){
+                Toast.makeText(BleDataActivity.this, "ACTION_DOWN", Toast.LENGTH_SHORT).show();
+                switch (v.getId()){
+                    case R.id.btn_up:
+                        dataTwoByte[0] = 0x1A;
+                        timer1=new Timer();
+                        mt1 = new MyTimerTask();
+                        mt1.MyFlag = 1;
+                        timer1.schedule(mt1,0,200);
+                        break;
+                    case R.id.btn_down:
+                        dataTwoByte[0] = 0x2A;
+                        timer2=new Timer();
+                        mt2 = new MyTimerTask();
+                        mt2.MyFlag = 2;
+                        timer2.schedule(mt2,0,200);
+                        break;
+                    case R.id.btn_left:
+                        dataTwoByte[1] = 0x3A;
+                        timer3=new Timer();
+                        mt3 = new MyTimerTask();
+                        mt3.MyFlag = 3;
+                        timer3.schedule(mt3,0,200);
+                        break;
+                    case R.id.btn_right:
+                        dataTwoByte[1] = 0x4A;
+                        timer4=new Timer();
+                        mt4 = new MyTimerTask();
+                        mt4.MyFlag = 4;
+                        timer4.schedule(mt4,0,200);
+                        break;
+                }
             }
             return false;
         }
     };
-
-    //得到代表方向的数据 1:上（前） 2 ：下（后） 3：左 4：右
-    private byte[] getDirectionData(int direction){
-        byte[] theBytes = new byte[8];
-        theBytes[0] = getSecondByte();
-        Tools.setLog("log1","byteArrayToHexStr:::::"+byteArrayToHexStr(theBytes));
-        theBytes[1] = theRandowData;
-        switch (direction){
-            case 1:theBytes[2] = 0x01;theBytes[5] = (byte)0x80;break;
-            case 2:theBytes[2] = 0x02;theBytes[5] = (byte)0x40;break;
-            case 3:theBytes[2] = 0x03;theBytes[5] = (byte)0x20;break;
-            case 4:theBytes[2] = 0x04;theBytes[5] = (byte)0x10;break;
-            case 5:theBytes[2] = 0x0F;theBytes[5] = (byte)0x00;break;
-        }
-        theBytes[3] = 0x0A;
-        //亮灯指令
-        theBytes[4] = 0x05;
-
-        return theBytes;
-    }
-    int secondIndex = 0;
-    //获取窗口值
-    private byte getSecondByte(){
-        byte[] bytes = Utils.intToButeArray(secondIndex);
-
-        byte returnData = (byte)(0x10 | bytes[1]);
-
-        if(!longlongFlag)//长按操作不变换窗口
-            return returnData;
-        secondIndex++;
-        if(secondIndex == 16)
-            secondIndex =0;
-        return returnData;
-    }
     private void stopSendData() {
-        Toast.makeText(BleDataActivity.this, "停22", Toast.LENGTH_SHORT).show();
-        findViewById(R.id.btn_stop).setEnabled(false);
-        findViewById(R.id.btn_more).setEnabled(true);
-        mSendBle.stopSend();
+//        Toast.makeText(BleDataActivity.this, "停22", Toast.LENGTH_SHORT).show();
+//        findViewById(R.id.btn_stop).setEnabled(false);
+//        findViewById(R.id.btn_more).setEnabled(true);
+//        mSendBle.stopSend();
     }
-    //长按标识 false :代表长按事件发生
-private Boolean longlongFlag = true;
     public void maxSendData(String realData,byte theDirection){
-        if(recycleCount != 1 && longlongFlag)
+        if(recycleCount != 1)
             stopSendData();
         findViewById(R.id.btn_more).setEnabled(false);
         findViewById(R.id.btn_stop).setEnabled(true);
