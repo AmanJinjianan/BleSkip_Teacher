@@ -47,11 +47,6 @@
         <activity
             android:name=".BleDataActivity"
             android:launchMode="singleInstance">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".BleConnectActivity"
@@ -67,7 +62,15 @@
 
         <service android:name=".BLE.BLEService" />
 
-        <activity android:name=".ControllerActivity"></activity>
+        <activity
+            android:name=".ControllerActivity"
+            android:screenOrientation="landscape"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
