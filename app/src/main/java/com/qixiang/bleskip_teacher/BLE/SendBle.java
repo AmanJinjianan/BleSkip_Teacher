@@ -161,7 +161,7 @@ public class SendBle {
     Handler theHandler;
     long thedata;
     public boolean startSendMore(String uuidHead, int iPL, Handler theHandler11) {
-        Tools.setLog("log1", "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:  uuidHead"  +uuidHead);
+        //Tools.setLog("log1", "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:  uuidHead"  +uuidHead);
         if (this.checkBleIsOpen() && this.checkPhoneCanSend()) {
             this.localBuilder = new AdvertiseSettings.Builder();
             if (iPL == 1) {
@@ -236,14 +236,14 @@ public class SendBle {
     AdvertiseCallback advertisingCallback1 = new AdvertiseCallback() {
         public void onStartSuccess(AdvertiseSettings settingsInEffect) {
             super.onStartSuccess(settingsInEffect);
-            Tools.setLog("log1", "..........................onStartSuccess......1");
+            //Tools.setLog("log1", "..........................onStartSuccess......1");
             if (SendBle.this.listener != null) {
                 SendBle.this.listener.onSendStatus(true);
             }
         }
         public void onStartFailure(int errorCode) {
             super.onStartFailure(errorCode);
-            Tools.setLog("log1", "..........................onStartFailure......1");
+            //Tools.setLog("log1", "..........................onStartFailure......1");
             if (SendBle.this.listener != null) {
                 SendBle.this.listener.onSendStatus(false);
             }
@@ -253,7 +253,7 @@ public class SendBle {
     AdvertiseCallback advertisingCallback2 = new AdvertiseCallback() {
         public void onStartSuccess(AdvertiseSettings settingsInEffect) {
             super.onStartSuccess(settingsInEffect);
-            Tools.setLog("log1", "..........................onStartSuccess......2");
+            //Tools.setLog("log1", "..........................onStartSuccess......2");
             if (SendBle.this.listener != null) {
                 SendBle.this.listener.onSendStatus(true);
             }
@@ -262,7 +262,7 @@ public class SendBle {
         public void onStartFailure(int errorCode) {
             super.onStartFailure(errorCode);
 
-            Tools.setLog("log1", "..........................onStartFailure......2");
+            //Tools.setLog("log1", "..........................onStartFailure......2");
             if (SendBle.this.listener != null) {
                 SendBle.this.listener.onSendStatus(false);
             }
