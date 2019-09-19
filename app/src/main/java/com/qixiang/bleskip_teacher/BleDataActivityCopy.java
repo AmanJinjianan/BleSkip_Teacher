@@ -776,8 +776,6 @@ public MyListener listener = new MyListener() {
                 //data="0d2be7f7-e6d6-4f48-a4bc-e521f9fd8eff";
 
                 maxSendData(true);
-
-
                 break;
             case R.id.btn_stop:
                 stopSendData();
@@ -787,14 +785,7 @@ public MyListener listener = new MyListener() {
                 break;
             case R.id.btn_stop_reveive:
                 break;
-            /*case R.id.btn_stop:
-                break;
-            case R.id.btn_stop:
-                break;
-            case R.id.btn_stop:
-                break;
-            case R.id.btn_stop:
-                break;*/
+
         }
     }
 
