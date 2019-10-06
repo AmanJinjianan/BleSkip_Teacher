@@ -2,11 +2,12 @@ package com.qixiang.bleskip_teacher.Util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.WindowManager;
 
 import com.qixiang.bleskip_teacher.MainActivity;
 import com.qixiang.bleskip_teacher.Model.StuInfo;
-import com.qixiang.bleskip_teacher.TeachGoingActivity;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -27,6 +28,8 @@ import static android.content.Context.MODE_PRIVATE;
  */
 
 public class Utils {
+
+
 
     public static boolean WXFlag=false;
 

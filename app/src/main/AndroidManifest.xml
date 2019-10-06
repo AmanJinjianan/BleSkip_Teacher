@@ -22,9 +22,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:launchMode="singleTask"></activity>
-        <activity android:name=".EighteenMissionActivity"></activity>
-        <activity android:name=".StudentListActivity" />
+            android:screenOrientation="landscape" />
         <activity android:name=".StudentInfoForApplyActivity">
             <intent-filter>
                 <action android:name="com.qixiang.bleskip.android_intent" />
@@ -40,36 +38,41 @@
             </intent-filter>
         </activity>
         <activity android:name=".StuDetailForTeachActivity" />
-        <activity android:name=".GameResultActivity" />
-        <activity android:name=".TeachGoingActivity" />
         <activity android:name=".SQLiteActivity" />
         <activity android:name=".Test3Char" />
         <activity
             android:name=".BleDataActivity"
-            android:launchMode="singleInstance">
-        </activity>
+            android:launchMode="singleInstance" />
         <activity
             android:name=".BleConnectActivity"
-            android:launchMode="singleInstance"></activity>
+            android:launchMode="singleInstance" />
         <activity
             android:name=".LoginActivity"
-            android:launchMode="singleInstance"></activity>
+            android:launchMode="singleInstance" />
         <activity
             android:name=".wxapi.WXEntryActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <service android:name=".BLE.BLEService" />
 
         <activity
             android:name=".ControllerActivity"
-            android:screenOrientation="landscape">
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".ControlMainAct"
+            android:launchMode="singleInstance"
+            android:screenOrientation="landscape"
+            android:theme="@style/theme_fullScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".TestActivity"></activity>
+        <activity android:name=".PKActivity"></activity>
     </application>
 
 </manifest>

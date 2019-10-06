@@ -22,7 +22,7 @@ public class ClassFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 
         if(mView == null){
-            mView = inflater.inflate(R.layout.fragment_class,null);
+            //mView = inflater.inflate(R.layout.fragment_class,null);
         }
         return mView;
     }

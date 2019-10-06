@@ -6,6 +6,15 @@
     <string name="title1">验证码登录</string>
     <string name="title2">使用微信账号登录</string>
 
+    <string name="main_playset">玩库</string>
+    <string name="main_control">控制</string>
+    <string name="main_study">学习</string>
+    <string name="main_code">编程</string>
+    <string name="main_show">乐秀</string>
+
+    <string name="main_ai">智能机器人编程</string>
+
+
     <string name="stu_name">姓名</string>
     <string name="stu_gender">性别</string>
     <string name="stu_mark">成绩</string>

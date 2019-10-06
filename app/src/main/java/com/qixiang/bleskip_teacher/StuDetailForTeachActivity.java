@@ -256,22 +256,13 @@ public void backtomain(View view){
                 selectIndexArray[maIndex++] = i;
             }
             ;
-//             book=new Book();
-//            book.setTitle("Java编程思想");
-//            Author author=new Author();
-//            author.setId(1);
-//            author.setName("Bruce Eckel");
-//            book.setAuthor(author);
-//            Intent intent=new Intent(this,SecondActivity.class);
-//            intent.putExtra("book",new Gson().toJson(book));
-//            startActivity(intent);
 
-            Intent intent = new Intent(StuDetailForTeachActivity.this,EighteenMissionActivity.class);
-            intent.putExtra("indexarray",selectIndexArray);
-            intent.putExtra("selectedflag",seletedFlag);
-            //intent.putExtra("aha",hj);
-            startActivity(intent);
-            StuDetailForTeachActivity.this.finish();
+//            Intent intent = new Intent(StuDetailForTeachActivity.this,EighteenMissionActivity.class);
+//            intent.putExtra("indexarray",selectIndexArray);
+//            intent.putExtra("selectedflag",seletedFlag);
+//            //intent.putExtra("aha",hj);
+//            startActivity(intent);
+//            StuDetailForTeachActivity.this.finish();
         }
     }
 }

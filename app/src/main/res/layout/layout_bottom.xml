@@ -1,70 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
     android:layout_alignParentBottom="true"
     android:paddingTop="3dp"
-    android:paddingBottom="3dp"
+    android:background="#FF4D53"
     >
+    <LinearLayout
+        android:id="@+id/zeroLinearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_weight="1">
+        <ImageButton
+            android:id="@+id/btn_my"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/icon_user"/>
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/firstLinearLayout"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="#87CEEB"
-        android:gravity="center_horizontal"
+        android:gravity="center"
+        android:background="@drawable/shape_corner_up"
         android:layout_weight="1">
-        <!-- <ImageView
-             android:id="@+id/firstImageView"
-             android:background="@drawable/tab_weixin"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content" />-->
         <TextView
             android:id="@+id/firstTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="班级管理"
+            android:textSize="30sp"
+            android:text="@string/main_playset"
             />
     </LinearLayout>
     <LinearLayout
         android:id="@+id/secondLinearLayout"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:gravity="center_horizontal"
+        android:gravity="center"
+        android:background="@drawable/shape_corner_up"
         android:layout_weight="1">
-        <View android:layout_width="2px" android:background="#000000" android:layout_height="fill_parent"></View>
-        <!--<ImageView
-            android:id="@+id/secondImageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/tab_setting"/>-->
         <TextView
             android:id="@+id/secondTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="教学任务"
+            android:textSize="30sp"
+            android:text="@string/main_control"
             />
     </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/btn_my44"
+        android:layout_marginBottom="-50dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@drawable/btn_center2"/>
     <LinearLayout
         android:id="@+id/threeLinearLayout"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:gravity="center_horizontal"
+        android:gravity="center"
+        android:background="@drawable/shape_corner_up"
         android:layout_weight="1">
-        <View android:layout_width="2px" android:background="#000000" android:layout_height="fill_parent"></View>
-        <!--<ImageView
-            android:id="@+id/threeImageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/tab_find"/>-->
         <TextView
             android:id="@+id/threeTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="个人中心"
+            android:textSize="30sp"
+            android:text="@string/main_study"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/fourthLinearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@drawable/shape_corner_up"
+        android:layout_weight="1">
+        <TextView
+            android:id="@+id/fourthTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="30sp"
+            android:text="@string/main_code"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/fivthLinearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@drawable/shape_corner_up"
+        android:layout_weight="1">
+        <TextView
+            android:id="@+id/fivthTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="30sp"
+            android:text="@string/main_show"
             />
     </LinearLayout>
 </LinearLayout>

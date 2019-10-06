@@ -32,6 +32,7 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -313,6 +314,7 @@ public class ControllerActivity extends Activity implements View.OnClickListener
     EditText et_SysID,et_SysID2,et_data;
     ScrollView mScrollView;
     Button btn_more,btn_stop,btn_up,btn_down,btn_left,btn_right;
+    ImageButton btn_back;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -327,6 +329,8 @@ public class ControllerActivity extends Activity implements View.OnClickListener
         btn_more.setOnClickListener(this);
         btn_left = (Button) findViewById(R.id.btn_left2598);
         btn_right = (Button)findViewById(R.id.btn_right2598);
+        btn_back = (ImageButton)findViewById(R.id.ib_control_back);
+        btn_back.setOnClickListener(this);
 
         btn_right.setOnTouchListener(MyTai);
         btn_left.setOnTouchListener(MyTai);
@@ -338,21 +342,32 @@ public class ControllerActivity extends Activity implements View.OnClickListener
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 //Utils.LogE("progress:"+progress);
-                if(progress>50){
-                    dataTwoByte[0] = 0x1A;
+                if(progress<47){//前进
+                    //dataTwoByte[0] = 0x1A;
+                    //将seekbar的波动范围映射成0x10-0x1F 十六个档位
+                    dataTwoByte[0] = (byte)(0x10 | Utils.intToButeArray(Math.abs(46-progress)/3)[1]);
+
                     if(timer12 == null){
                         timer12=new Timer();
                         mt12 = new MyTimerTask();
                         mt12.MyFlag = 1;
                         timer12.schedule(mt12,0,200);
                     }
-                }else if(progress<50){
-                    dataTwoByte[0] = 0x2A;
+                }else if(progress>54){//后退
+                    //dataTwoByte[0] = 0x2A;
+                    //将seekbar的波动范围映射成0x20-0x2F 十六个档位
+                    dataTwoByte[0] = (byte)(0x20 | Utils.intToButeArray(Math.abs(55-progress)/3)[1]);
                     if(timer12 == null){
                         timer12=new Timer();
                         mt12 = new MyTimerTask();
                         mt12.MyFlag = 2;
                         timer12.schedule(mt12,0,200);
+                    }
+                }else {
+                    dataTwoByte[0] = 0;
+                    if(timer12 != null){
+                        timer12.cancel();
+                        stopSendData();
                     }
                 }
             }
@@ -611,6 +626,8 @@ public class ControllerActivity extends Activity implements View.OnClickListener
         registerReceiver(bluetoothReceiver, intentFilter);
     }
 
+
+
     private BluetoothReceiver bluetoothReceiver = null;
 
 
@@ -677,6 +694,8 @@ public class ControllerActivity extends Activity implements View.OnClickListener
         // TODO Auto-generated method stub
         super.onDestroy();
         exit_activity = true;
+
+        this.unregisterReceiver(bluetoothReceiver);
         //unbindService(connection);
     }
 
@@ -813,18 +832,24 @@ public class ControllerActivity extends Activity implements View.OnClickListener
                 maxSendData("0000810000000000",(byte)0xFF);
                 break;
             case R.id.btn_left2598:
+
+                Utils.LogE("seekBar3                .............down");
                 maxSendData("00003A0000000000",(byte)0x03);
                 break;
             case R.id.btn_right2598:
                 maxSendData("00004A0000000000",(byte)0x04);
                 break;
+            case R.id.ib_control_back:
+                this.finish();
+                break;
+
         }
     }
     class MyTimerTask extends TimerTask {
         public int MyFlag = 0;
         @Override
         public void run() {
-            Utils.LogE(".............................");
+            Utils.LogE("...........................................................................................");
             myHandler2.sendEmptyMessage(4600);
 //            switch (MyFlag){
 //                case 1: myHandler.sendEmptyMessage(456); break;
@@ -859,13 +884,13 @@ public class ControllerActivity extends Activity implements View.OnClickListener
                 Toast.makeText(ControllerActivity.this, "ACTION_DOWN", Toast.LENGTH_SHORT).show();
                 switch (v.getId()){
                     case R.id.btn_left2598:
-                        dataTwoByte[1] = 0x3A;
+                        dataTwoByte[1] = 0x3C;
                         timer34=new Timer();
                         mt34 = new MyTimerTask();
                         timer34.schedule(mt34,0,200);
                         break;
                     case R.id.btn_right2598:
-                        dataTwoByte[1] = 0x4A;
+                        dataTwoByte[1] = 0x4C;
                         timer34=new Timer();
                         mt34 = new MyTimerTask();
                         timer34.schedule(mt34,0,200);
@@ -876,7 +901,7 @@ public class ControllerActivity extends Activity implements View.OnClickListener
         }
     };
     private void stopSendData() {
-        Toast.makeText(ControllerActivity.this, "停22", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(ControllerActivity.this, "停22", Toast.LENGTH_SHORT).show();
 //        findViewById(R.id.btn_stop).setEnabled(false);
 //        findViewById(R.id.btn_more).setEnabled(true);
 //        mSendBle.stopSend();
@@ -977,6 +1002,8 @@ public class ControllerActivity extends Activity implements View.OnClickListener
     byte[] df;
     byte windowNum =0;
     int oRandowData=0;
+
+    int formdata = 0;
     //6位随机数+2位窗口号
     public byte getSecondData(){
         if(mgFlag){
@@ -985,6 +1012,7 @@ public class ControllerActivity extends Activity implements View.OnClickListener
             df=Utils.intToButeArray(oRandowData);
         }
         if(df != null){
+            Utils.LogE("formdataaaaaaaaaaaaaaaaaaaaaaaaa:"+formdata++);
             windowNum++;
             if(windowNum>3)
                 windowNum=0;

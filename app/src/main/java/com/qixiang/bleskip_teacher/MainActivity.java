@@ -93,42 +93,12 @@ public class MainActivity extends AppCompatActivity implements MyAdapterMission.
             super.handleMessage(msg);
             switch (msg.what){
                 case 0:
-//                    Toast.makeText(LoginActivity.this,"验证成功",Toast.LENGTH_SHORT).show();
-//                    Intent it = new Intent(LoginActivity.this,MainActivity.class);
-//                    startActivity(it);
-//                    finish();
                     break;
-                case 1:
-                    //Toast.makeText(LoginActivity.this,"验证失败",Toast.LENGTH_SHORT).show();
-                    break;
-                case 100:
-                    InitClasses(Utils.stuInfo);;break;
-                case 101:
-                    Toast.makeText(MainActivity.this,"识别Json异常了。。。",Toast.LENGTH_LONG).show();break;
-                case 1010:
-                    InitTeach();;break;
-
             }
 
         }
     };
 
-    public class SerMap  implements Serializable {
-        public HashMap<String,Object> map;
-        public  SerMap(){
-
-        }
-
-        public HashMap<String, Object> getMap() {
-            return map;
-        }
-
-        public void setMap(HashMap<String, Object> map) {
-            this.map = map;
-
-        }
-
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -150,25 +120,7 @@ public class MainActivity extends AppCompatActivity implements MyAdapterMission.
         initView();
         initViewPager();
 
-        SetBroadcaseReceiver();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                //InitTeach();
-                //InitClasses();
 
-                if(HttpUtil.NetState)//脱网模式
-                {
-                    String dataString = Utils.readFileData(MainActivity.this,"data110");
-                    RecoginzeJson(dataString);
-                    mHandler.sendEmptyMessage(100);
-
-                }else {
-                    RequestClassInfo();
-                }
-
-            }
-        },400);
     }
 
 
@@ -399,17 +351,17 @@ private void GetDetailInfoFromSQL(String tableName,String peoplecount,String ove
         }
         dbQuery.close();
 
-    Intent it = new Intent(MainActivity.this, GameResultActivity.class);
-    Bundle bundle = new Bundle();
-    bundle.putSerializable("OverInfo", data2);
-    it.putExtras(bundle);
-
-    it.putExtra("srcFlag",2);
-    it.putExtra("PeopleCount",Integer.valueOf(peoplecount));
-    it.putExtra("gotPeopleCount",0);
-    it.putExtra("overPeopleCount",Integer.valueOf(overNumCount));
-
-    startActivity(it);
+//    Intent it = new Intent(MainActivity.this, GameResultActivity.class);
+//    Bundle bundle = new Bundle();
+//    bundle.putSerializable("OverInfo", data2);
+//    it.putExtras(bundle);
+//
+//    it.putExtra("srcFlag",2);
+//    it.putExtra("PeopleCount",Integer.valueOf(peoplecount));
+//    it.putExtra("gotPeopleCount",0);
+//    it.putExtra("overPeopleCount",Integer.valueOf(overNumCount));
+//
+//    startActivity(it);
 }
 //请求班级列表
 private void RequestClassInfo(){
@@ -468,45 +420,7 @@ private void RequestClassInfo(){
             }
         }
     }
-    private void InitClasses(JSONObject[][] stuInfo) {
-        Log.e("falter","hhhhhhhhhhhhhhhhhhhhhhhhhhhhh...+InitClasses");
-        ListView lv = (ListView)findViewById(R.id.list_class233);
-
-        findViewById(R.id.btn_addclass).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Log.e("falter","hhhhhhhhhhhhhhhhhhhhhhhhhhhhh...+InitClasses/n"+Utils.readFileData(MainActivity.this,"data110"));
-                showEditDialog(null);
-            }
-        });
-        classList.clear();
-        for (int i = 0;i<stuInfo.length;i++){
-        //for (int i = 0;i<1;i++){
-            try{
-                //JSONObject jh = stuInfo[i][0];
-                //String kk = jh.getString("bjname");
-                classList.add(new ClassInfo(stuInfo[i][0].getString("bjname"),stuInfo[i],stuInfo[i][0].getString("bjid")));
-            }catch (Exception e){
-                Log.e("falter","Json Exception....");
-            }
-        }
-
-        MyAdapter adapter22 = new MyAdapter(classList,MainActivity.this);
-        adapter22.setOnInnerItemOnClickListener(this);
-        lv.setAdapter(adapter22);
-
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Log.e(TAG,"66666666666666666"+classList.get(i).getClassName());
-                ///Tools.mBleService.characterWrite1.setValue(Tools.hexToBytes("06241112131410"));
-                //Tools.mBleService.mBluetoothGatt.writeCharacteristic(Tools.mBleService.characterWrite1);
-                Utils.ClassIndex = i;
-                Intent intent = new Intent(MainActivity.this,StudentListActivity.class);
-                startActivity(intent);
-            }
-        });
-    }
+    private void InitClasses(JSONObject[][] stuInfo) {}
 
     private void onBleConnectedOK(){
             for(ClassInfo cl:classList){
