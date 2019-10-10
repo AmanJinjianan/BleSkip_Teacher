@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="google" value="notranslate">
+    <link rel="shortcut icon" href="static/favicon.ico">
+    <title>Scratch 3.0 GUI</title>
+    
+  </head>
+  <body>
+  <script type="text/javascript" src="lib.min.js"></script><script type="text/javascript" src="chunks/gui.js"></script>
+  
+  <script>
+  function getLine(x1,y1,x2,y2)
+  {
+  var bRev = false;
+  var dx = x2 - x1;
+  var dy = y2 - y1;
+  var line = new Array();
+  line[0]=new Array();
+  line[1]=new Array();
+  if(Math.abs(dy) < Math.abs(dx))
+      {
+      if(dx < 0)
+      {
+      bRev = true;
+      var i = x1;
+      x1 = x2;
+      x2 = i;
+      i = y1;
+      y1 = y2;
+      y2 = i;
+      dx = -dx;
+      dy = -dy;
+      }
+      var flag;
+      if(dy < 0)
+      flag = -1;
+      else
+      flag = 1;
+      dy = Math.abs(dy);
+      var half = dx >> 1;
+      var error = 0;
+      var x = x1;
+      var y = y1;
+      line=ewszcsh(dx + 1,2);
+      for(var i = 0; i < dx; i++)
+          {
+          if(bRev)
+          {
+          line[dx - i][0] = x;
+          line[dx - i][1] = y;
+          } else
+          {
+          line[i][0] = x;
+          line[i][1] = y;
+          }
+          x++;
+          error += dy;
+          if(error > half)
+          {
+          error -= dx;
+          y += flag;
+          }
+          }
+          
+          } else
+          {
+          if(dy < 0)
+              {
+              bRev = true;
+              var i = x1;
+              x1 = x2;
+              x2 = i;
+              i = y1;
+              y1 = y2;
+              y2 = i;
+              dx = -dx;
+              dy = -dy;
+              }
+              var flag;
+              if(dx < 0)
+              flag = -1;
+              else
+              flag = 1;
+              dx = Math.abs(dx);
+              var half = dy >> 1;
+              var error = 0;
+              var x = x1;
+              var y = y1;
+              line=ewszcsh(dy + 1,2);
+              for(var i = 0; i < dy; i++)
+                  {
+                  if(bRev)
+                  {
+                  line[dy - i][0] = x;
+                  line[dy - i][1] = y;
+                  } else
+                  {
+                  line[i][0] = x;
+                  line[i][1] = y;
+                  }
+                  y++;
+                  error += dx;
+                  if(error > half)
+                  {
+                  error -= dy;
+                  x += flag;
+                  }
+                  }
+                  
+                  }
+                  if(bRev)
+                  {
+                  line[0][0] = x2;
+                  line[0][1] = y2;
+                  } else
+                  {
+                  line[line.length - 1][0] = x2;
+                  line[line.length - 1][1] = y2;
+                  }
+                  return line;
+                  }
+  </script>
+  </body>
+</html>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/back" android:title="jinjinjin"/>
+    <item android:title="jinjinjin">
+        <menu >
+            <!-- 定义一组单选菜单项 -->
+            <group android:checkableBehavior="single" >
+                <!-- 定义子菜单 -->
+                <item android:id="@+id/red" android:title="jinjinjin"/>
+                <item android:id="@+id/green" android:title="jinjinjin"/>
+                <item android:id="@+id/blue" android:title="jinjinjin"/>
+            </group>
+        </menu>
+    </item>
+    <item android:title="jinjinjin">
+        <menu >
+            <!-- 定义子菜单 -->
+            <group  android:checkableBehavior="single">
+                <item android:id="@+id/width_1" android:title="jinjinjin"/>
+                <item android:id="@+id/width_2" android:title="jinjinjin"/>
+                <item android:id="@+id/width_3" android:title="jinjinjin"/>
+            </group>
+        </menu>
+    </item>
+    <item android:id="@+id/nothing" android:title="jinjinjin"/>
+    <item android:id="@+id/clear" android:title="jinjinjin" android:icon="@drawable/icon_back_b"/>
+    <item android:id="@+id/save" android:title="jinjinjin"/>
+    <item android:id="@+id/save_camera" android:title="jinjinjin"/>
+
+</menu>

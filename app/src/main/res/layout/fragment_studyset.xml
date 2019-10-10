@@ -8,7 +8,9 @@
         android:id="@+id/horizontalScrollViewstudy"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#007b12">
+        android:scrollbars="none"
+        android:fadingEdge="none"
+        android:background="#00bbc7">
 
         <LinearLayout
             android:id="@+id/horizinercstudy"

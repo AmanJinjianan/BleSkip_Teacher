@@ -58,7 +58,6 @@ public class StudysetFragment extends Fragment {
         layoutParams.gravity = Gravity.CENTER;
         layoutParams.setMargins(20, 10, 20, 10);
 
-
         for (int i = 0; i < 3; i++) {
             Item_Studyset ip = new Item_Studyset(context1);
             ip.setLayoutParams(layoutParams);

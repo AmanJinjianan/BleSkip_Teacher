@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.qixiang.bleskip_teacher.CodingActivity"
+    android:background="#f7f8fc">
+
+    <WebView
+        android:id="@+id/wv_webview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+    </WebView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageButton
+            android:id="@+id/ib_code_back"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/icon_back_b"
+            tools:layout_editor_absoluteX="142dp"
+            tools:layout_editor_absoluteY="94dp" />
+
+        <ImageButton
+            android:id="@+id/imageButton17"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@+id/ib_code_back"
+            android:layout_marginEnd="42dp"
+            android:background="@drawable/btn_gra_open" />
+
+        <ImageButton
+            android:id="@+id/imageButton18"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignStart="@+id/imageButton17"
+            android:layout_below="@+id/imageButton17"
+            android:background="@drawable/btn_gra_save" />
+
+        <ImageButton
+            android:id="@+id/imageButton19"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignStart="@+id/imageButton18"
+            android:layout_below="@+id/imageButton18"
+            android:background="@drawable/btn_gra_clear" />
+
+        <ImageButton
+            android:id="@+id/imageButton20"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignStart="@+id/imageButton19"
+            android:layout_below="@+id/imageButton19"
+            android:background="@drawable/btn_gra_zoomin" />
+
+        <ImageButton
+            android:id="@+id/imageButton21"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignEnd="@+id/imageButton20"
+            android:layout_below="@+id/imageButton20"
+            android:background="@drawable/btn_gra_zoomout" />
+
+        <ImageButton
+            android:id="@+id/imageButton22"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="27dp"
+            android:layout_marginEnd="39dp"
+            android:background="@drawable/btn_gra_run" />
+
+    </RelativeLayout>
+
+
+
+</FrameLayout>

@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.qixiang.bleskip_teacher.ControlMainAct;
 import com.qixiang.bleskip_teacher.ControllerActivity;
+import com.qixiang.bleskip_teacher.DrawActivity;
 import com.qixiang.bleskip_teacher.PKActivity;
 import com.qixiang.bleskip_teacher.R;
 
@@ -49,9 +50,8 @@ public class Item_Controlset extends RelativeLayout{
                 ib.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //Intent intent = new Intent(theContext, ControllerActivity.class);
-                        //theContext.startActivity(intent);
-                        Toast.makeText(theContext,"未开发",Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(theContext, DrawActivity.class);
+                        theContext.startActivity(intent);
                     }
                 });
                     iv.setBackgroundResource(R.drawable.pic_col_zi2);

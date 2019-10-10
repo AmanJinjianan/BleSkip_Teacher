@@ -25,6 +25,7 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -32,7 +33,9 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -123,11 +126,9 @@ public class ControllerActivity extends Activity implements View.OnClickListener
                     return;
                 }
                 remainString  = ddString;
-
                 Tools.setLog("log1", "系统值匹配成功..........LLL:"+recycleCount+"\n       ddString:"+ddString+"   remainString:"+remainString);
                 theReamainDataString = "系统值匹配成功..........LLL:"+recycleCount;
                 myHandler.sendEmptyMessage(131415);
-
 
                 if(identifyRanData(scanRecord)){//匹配校验发送的随机数
                     Tools.setLog("log1", "随机数匹配成功..........:"+recycleCount);
@@ -313,7 +314,8 @@ public class ControllerActivity extends Activity implements View.OnClickListener
     TextView tv_id,mTextStatus;
     EditText et_SysID,et_SysID2,et_data;
     ScrollView mScrollView;
-    Button btn_more,btn_stop,btn_up,btn_down,btn_left,btn_right;
+    Button btn_stop,btn_up,btn_down,btn_left,btn_right;
+    ImageButton btn_more;
     ImageButton btn_back;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -325,7 +327,7 @@ public class ControllerActivity extends Activity implements View.OnClickListener
 
         reveiveFlag = false;
 
-        btn_more = (Button)findViewById(R.id.btn_more2598);
+        btn_more = (ImageButton)findViewById(R.id.btn_more2598);
         btn_more.setOnClickListener(this);
         btn_left = (Button) findViewById(R.id.btn_left2598);
         btn_right = (Button)findViewById(R.id.btn_right2598);
@@ -335,18 +337,20 @@ public class ControllerActivity extends Activity implements View.OnClickListener
         btn_right.setOnTouchListener(MyTai);
         btn_left.setOnTouchListener(MyTai);
 
+        FrameLayout.LayoutParams ll = new FrameLayout.LayoutParams((int)(ControlMainAct.height*1.77),ControlMainAct.height);
+        ll.gravity = Gravity.CENTER_HORIZONTAL;
+        findViewById(R.id.ll_control_center).setLayoutParams(ll);
+
         theSeek = (SeekBar) findViewById(R.id.seekBar3);
         theSeek.setProgressDrawable(null);
         theSeek.setProgress(50);
         theSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                //Utils.LogE("progress:"+progress);
                 if(progress<47){//前进
                     //dataTwoByte[0] = 0x1A;
                     //将seekbar的波动范围映射成0x10-0x1F 十六个档位
                     dataTwoByte[0] = (byte)(0x10 | Utils.intToButeArray(Math.abs(46-progress)/3)[1]);
-
                     if(timer12 == null){
                         timer12=new Timer();
                         mt12 = new MyTimerTask();
@@ -363,13 +367,9 @@ public class ControllerActivity extends Activity implements View.OnClickListener
                         mt12.MyFlag = 2;
                         timer12.schedule(mt12,0,200);
                     }
-                }else {
-                    dataTwoByte[0] = 0;
-                    if(timer12 != null){
-                        timer12.cancel();
-                        stopSendData();
-                    }
                 }
+                Utils.LogE("progress:::::::::::::  :::::::::::::::"+Utils.toHexString(dataTwoByte));
+
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
@@ -384,6 +384,7 @@ public class ControllerActivity extends Activity implements View.OnClickListener
                     dataTwoByte[0] = 0;
                     timer12.cancel();
                     stopSendData();
+                    mSendBle.stopSend();
                     timer12 = null;
                 }
 
@@ -832,8 +833,6 @@ public class ControllerActivity extends Activity implements View.OnClickListener
                 maxSendData("0000810000000000",(byte)0xFF);
                 break;
             case R.id.btn_left2598:
-
-                Utils.LogE("seekBar3                .............down");
                 maxSendData("00003A0000000000",(byte)0x03);
                 break;
             case R.id.btn_right2598:
@@ -878,6 +877,7 @@ public class ControllerActivity extends Activity implements View.OnClickListener
                     if(timer34 != null){
                         timer34.cancel();
                         stopSendData();
+                        mSendBle.stopSend();
                     }
                 }
             } else  if(event.getAction()==MotionEvent.ACTION_DOWN){
@@ -1012,7 +1012,7 @@ public class ControllerActivity extends Activity implements View.OnClickListener
             df=Utils.intToButeArray(oRandowData);
         }
         if(df != null){
-            Utils.LogE("formdataaaaaaaaaaaaaaaaaaaaaaaaa:"+formdata++);
+            //Utils.LogE("formdataaaaaaaaaaaaaaaaaaaaaaaaa:"+formdata++);
             windowNum++;
             if(windowNum>3)
                 windowNum=0;

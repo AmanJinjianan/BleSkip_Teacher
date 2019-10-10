@@ -3,7 +3,9 @@ package com.qixiang.bleskip_teacher;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -12,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +28,7 @@ import android.widget.Toast;
 
 import com.qixiang.bleskip_teacher.BLE.Tools;
 import com.qixiang.bleskip_teacher.Fragment.ClassFragment;
+import com.qixiang.bleskip_teacher.Fragment.CodesetFragment;
 import com.qixiang.bleskip_teacher.Fragment.ControlsetFragment;
 import com.qixiang.bleskip_teacher.Fragment.MyFragment;
 import com.qixiang.bleskip_teacher.Fragment.PlaysetFragment;
@@ -65,6 +69,17 @@ public class ControlMainAct extends AppCompatActivity implements  View.OnClickLi
 
         setContentView(R.layout.activity_control_main);
 
+
+//        Context mContext = this;
+//        float scaledDensity = mContext.getResources().getDisplayMetrics().scaledDensity;
+//        float density = mContext.getResources().getDisplayMetrics().density;
+//        float xdpi = mContext.getResources().getDisplayMetrics().xdpi;
+//        float ydpi = mContext.getResources().getDisplayMetrics().ydpi;
+//        int width = mContext.getResources().getDisplayMetrics().widthPixels;
+//        int height = mContext.getResources().getDisplayMetrics().heightPixels;
+//        // 这样可以计算屏幕的物理尺寸
+//        float width2 = width / xdpi;
+//        float height2 = height / ydpi;
         //得到屏幕尺寸信息
         dm = new DisplayMetrics();
         wm = (WindowManager) ControlMainAct.this.getSystemService(Context.WINDOW_SERVICE);
@@ -72,15 +87,20 @@ public class ControlMainAct extends AppCompatActivity implements  View.OnClickLi
         width = dm.widthPixels;
         height = dm.heightPixels;
 
+
+
         mFragmentManager = getSupportFragmentManager();
 
         Fragment pf = new PlaysetFragment();
         Fragment cf = new ControlsetFragment();
         Fragment sf = new StudysetFragment();
+        Fragment csf = new CodesetFragment();
 
         mFragmentList.add(pf);
         mFragmentList.add(cf);
         mFragmentList.add(sf);
+        mFragmentList.add(csf);
+
         mViewPagerFragmentAdapter =   new ViewPagerFragmentAdapter(mFragmentManager,mFragmentList);
         initView();
 
@@ -105,7 +125,7 @@ public class ControlMainAct extends AppCompatActivity implements  View.OnClickLi
         firstLinearLayoutGD = (GradientDrawable) firstLinearLayout.getBackground();
         secondLinearlayoutGD = (GradientDrawable) secondLinearlayout.getBackground();
         threeLinearLayoutGD = (GradientDrawable) threeLinearLayout.getBackground();
-        fourLinearLayoutGD = (GradientDrawable) firstLinearLayout.getBackground();
+        fourLinearLayoutGD = (GradientDrawable) fourLinearLayout.getBackground();
         fiveLinearLayoutGD = (GradientDrawable) firstLinearLayout.getBackground();
 
         mViewpager.addOnPageChangeListener(new ViewPagerOnPagerChangedLisenter());
@@ -168,8 +188,8 @@ public class ControlMainAct extends AppCompatActivity implements  View.OnClickLi
         switch (position){
             case 0:firstLinearLayoutGD.setColor(Color.parseColor("#2E43C0"));break;
             case 1:secondLinearlayoutGD.setColor(Color.parseColor("#41349e"));break;
-            case 2:threeLinearLayoutGD.setColor(Color.parseColor("#49BAC8"));break;
-            case 3:fourLinearLayoutGD.setColor(Color.parseColor("#49BAC8"));break;
+            case 2:threeLinearLayoutGD.setColor(Color.parseColor("#00bbc7"));break;
+            case 3:fourLinearLayoutGD.setColor(Color.parseColor("#12b961"));break;
             case 4:fiveLinearLayoutGD.setColor(Color.parseColor("#49BAC8"));break;
         }
     }
@@ -183,11 +203,11 @@ public class ControlMainAct extends AppCompatActivity implements  View.OnClickLi
         @Override
         public void onPageSelected(int position) {
 
-            boolean[] state = new boolean[3];
+            boolean[] state = new boolean[4];
             state[position] = true;
             //titleTextView.setText(titleName[position]);
             SwitchColor(position);
-            updateBottomLinearLayoutSelect(state[0],state[1],state[2],false);
+            updateBottomLinearLayoutSelect(state[0],state[1],state[2],state[3]);
 //            Log.e(Utils.TAG,"position:"+position+" Tools.connectedFlag:"+ Tools.connectedFlag);
             if(position == 1)
             {

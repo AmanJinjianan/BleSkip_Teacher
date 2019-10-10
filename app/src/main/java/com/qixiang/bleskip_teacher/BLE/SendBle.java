@@ -161,7 +161,7 @@ public class SendBle {
     Handler theHandler;
     long thedata;
     public boolean startSendMore(String uuidHead, int iPL, Handler theHandler11) {
-        Tools.setLog("log1", "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:  uuidHead"  +uuidHead);
+        //Tools.setLog("log1", "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:  uuidHead"  +uuidHead);
         if (this.checkBleIsOpen() && this.checkPhoneCanSend()) {
             this.localBuilder = new AdvertiseSettings.Builder();
             if (iPL == 1) {
