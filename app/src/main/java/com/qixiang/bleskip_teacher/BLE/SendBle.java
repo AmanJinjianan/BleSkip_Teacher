@@ -75,7 +75,7 @@ public class SendBle {
 
     public SendBle(Context context) {
         this.mContext = context;
-        this.mBluetoothManager = (BluetoothManager) this.mContext.getSystemService("bluetooth");
+        this.mBluetoothManager = (BluetoothManager) this.mContext.getSystemService(Context.BLUETOOTH_SERVICE);
         this.mBluetoothAdapter = this.mBluetoothManager.getAdapter();
     }
 
@@ -84,7 +84,7 @@ public class SendBle {
     }
 
     public boolean checkPhoneCanSend() {
-        this.mLeAdvertiser = ((BluetoothManager) this.mContext.getSystemService("bluetooth")).getAdapter().getBluetoothLeAdvertiser();
+        this.mLeAdvertiser = ((BluetoothManager) this.mContext.getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter().getBluetoothLeAdvertiser();
         return this.mLeAdvertiser != null;
     }
 
