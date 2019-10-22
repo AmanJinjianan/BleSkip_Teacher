@@ -21,6 +21,7 @@ import com.qixiang.bleskip_teacher.MyView.DrawView;
 public class DrawActivity extends Activity implements View.OnClickListener{
     static int i = 0, j = 0;
 
+    public DrawView dv;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,8 +35,13 @@ public class DrawActivity extends Activity implements View.OnClickListener{
         ActivityCompat.requestPermissions(this, mPermission, 1);
 
         findViewById(R.id.ib_draw_back).setOnClickListener(this);
+        findViewById(R.id.ibtn_clear).setOnClickListener(this);
+        findViewById(R.id.ibtn_clearall).setOnClickListener(this);
+        findViewById(R.id.ibtn_draw).setOnClickListener(this);
         //PermisionUtils.verifyStoragePermissions(this);   //获取手机SD卡读取权限
 
+
+         dv = (DrawView) findViewById(R.id.drawView1);    //获取自定义的绘图视图
     }
 
     // 创建选项菜单
@@ -49,14 +55,10 @@ public class DrawActivity extends Activity implements View.OnClickListener{
     // 当菜单项被选择时，作出相应的处理
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        DrawView dv = (DrawView) findViewById(R.id.drawView1);    //获取自定义的绘图视图
+
         dv.paint.setXfermode(null);        //取消擦除效果
         dv.paint.setStrokeWidth(35);        //初始化画笔的宽度
         switch (item.getItemId()) {
-
-            case R.id.ib_draw_back:
-
-                break;
             case R.id.red:
                 dv.paint.setColor(Color.RED);    //设置画笔的颜色为红色
                 item.setChecked(true);
@@ -70,7 +72,7 @@ public class DrawActivity extends Activity implements View.OnClickListener{
                 item.setChecked(true);
                 break;
             case R.id.width_1:
-                dv.paint.setStrokeWidth(5);    //设置笔触的宽度为1像素
+                dv.paint.setStrokeWidth(50);    //设置笔触的宽度为1像素
                 break;
             case R.id.width_2:
                 dv.paint.setStrokeWidth(10);    //设置笔触的宽度为5像素
@@ -113,6 +115,17 @@ public class DrawActivity extends Activity implements View.OnClickListener{
             case R.id.ib_draw_back:
                 finish();
             break;
+            case R.id.ibtn_clear:
+                dv.clear(); //橡皮檫
+                break;
+            case R.id.ibtn_clearall:
+                dv.nothing();        //清屏
+                break;
+            case R.id.ibtn_draw:
+                dv.paint.setXfermode(null);        //取消擦除效果
+                dv.paint.setStrokeWidth(50);        //初始化画笔的宽度
+                break;
+
         }
     }
 }

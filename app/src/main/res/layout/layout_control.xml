@@ -80,9 +80,10 @@
                 android:layout_height="95px"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/button3"
-                android:layout_marginStart="68px"
-                android:layout_marginTop="27dp"
-                android:background="@drawable/btn_start" />
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="28dp"
+                android:background="@drawable/btn_select"
+                />
 
             <ImageButton
                 android:id="@+id/btn_more2598"
@@ -91,7 +92,8 @@
                 android:layout_alignTop="@+id/imageButton10"
                 android:layout_marginStart="76px"
                 android:layout_toEndOf="@+id/imageButton10"
-                android:background="@drawable/btn_select" />
+                android:background="@drawable/btn_start"
+                 />
         </RelativeLayout>
 
         <RelativeLayout
