@@ -63,14 +63,19 @@
             android:name=".ControllerActivity"
             android:screenOrientation="landscape"></activity>
         <activity
-            android:name=".ControlMainAct"
-            android:screenOrientation="landscape"
-            android:theme="@style/theme_fullScreen">
-
+            android:name=".ControllerProActivity"
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".ControlMainAct"
+            android:screenOrientation="landscape"
+            android:theme="@style/theme_fullScreen">
+
+
         </activity>
         <activity
             android:name=".DrawActivity"

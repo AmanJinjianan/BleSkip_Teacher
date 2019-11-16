@@ -13,7 +13,6 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Handler;
@@ -23,21 +22,14 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.Display;
-import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -45,22 +37,18 @@ import android.widget.Toast;
 
 import com.qixiang.bleskip_teacher.BLE.BLEService;
 import com.qixiang.bleskip_teacher.BLE.MyListener;
+import com.qixiang.bleskip_teacher.BLE.SendBle;
 import com.qixiang.bleskip_teacher.BLE.Tools;
-import com.qixiang.bleskip_teacher.Fragment.ClassFragment;
 import com.qixiang.bleskip_teacher.Fragment.CodesetFragment;
 import com.qixiang.bleskip_teacher.Fragment.ControlsetFragment;
-import com.qixiang.bleskip_teacher.Fragment.MyFragment;
 import com.qixiang.bleskip_teacher.Fragment.PlaysetFragment;
 import com.qixiang.bleskip_teacher.Fragment.StudysetFragment;
-import com.qixiang.bleskip_teacher.Fragment.TeachFragment;
+import com.qixiang.bleskip_teacher.Impl.BleDataImpl;
 import com.qixiang.bleskip_teacher.Util.Utils;
-import com.qixiang.bleskip_teacher.ViewAdapter.MyAdapter;
-import com.qixiang.bleskip_teacher.ViewAdapter.MyAdapterMission;
 import com.qixiang.bleskip_teacher.ViewAdapter.ViewPagerFragmentAdapter;
 
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class ControlMainAct extends AppCompatActivity implements  View.OnClickListener {
@@ -69,8 +57,15 @@ public class ControlMainAct extends AppCompatActivity implements  View.OnClickLi
     public DisplayMetrics dm;
     public static int width;         // 屏幕宽度（像素）
     public static int height;       // 屏幕高度（像素）
+    private BluetoothDevice theDevice;
+    String data = "",theReceiveData;
+    public boolean reveiveFlag = false;
+    byte[] dataTwoByte = new byte[2];
+    int ppCount = 0;
+    String remainString = "";
+    private SendBle mSendBle;
+    private final static int REQUEST_ENABLE_BT=2001;
 
-    private HorizontalScrollView horizontalScrollView;
     public LinearLayout container;
     GradientDrawable firstLinearLayoutGD,secondLinearlayoutGD,threeLinearLayoutGD,fourLinearLayoutGD,fiveLinearLayoutGD;
 
@@ -82,6 +77,8 @@ public class ControlMainAct extends AppCompatActivity implements  View.OnClickLi
     ViewPagerFragmentAdapter mViewPagerFragmentAdapter;
 
     TextView titleTextView;
+    //保存下位机设备ID
+    public byte theOneByte=0;
 
     private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
 
@@ -146,18 +143,13 @@ public class ControlMainAct extends AppCompatActivity implements  View.OnClickLi
             }
         }
     };
-    private Handler myHandler2 = new Handler(){
-        public void handleMessage(android.os.Message msg) {
-            Utils.LogE("myHandler2 dataTwoByte:   "+Utils.toHexString(dataTwoByte));
-            maxSendData("0000"+Utils.toHexString(dataTwoByte)+"00000000",(byte)0x04);
-        }};
+
     //代表在第几个“发收周期”，初始为"1"（一发一收代表一个周期）
     int recycleCount=1;
     String theReamainDataString = "";
     @SuppressLint("HandlerLeak")
     private Handler myHandler = new Handler(){
         public void handleMessage(android.os.Message msg) {
-            //Tools.setLog("log1", "myHandler.........."+msg.what);
             switch (msg.what) {
                 case 13141:
                     Tools.setLog("log1", "..........................................................................13141");
@@ -169,7 +161,6 @@ public class ControlMainAct extends AppCompatActivity implements  View.OnClickLi
                         Toast.makeText(ControlMainAct.this, "连上了..."+Utils.toHexString(new byte[]{theOneByte}), Toast.LENGTH_LONG).show();
                         maxSendData("0000000000000000",(byte)0x01);
                         myHandler.sendEmptyMessage(122);
-                        setFourBtnEnable(true);
                     }else {
                         //scrollToBottom("第"+recycleCount+"个周期");
                         maxSendData("0000000000000000",(byte)0xFF);
@@ -218,14 +209,9 @@ public class ControlMainAct extends AppCompatActivity implements  View.OnClickLi
                 case 12:
                     if(Tools.mBleService != null){
                         Tools.mBleService.stopscanBle(mLeScanCallback);
-                        Tools.mBleService.setOnWriteOverCallback(mOnWriteOverCallback);
+                        //Tools.mBleService.setOnWriteOverCallback(mOnWriteOverCallback);
                     }
                     Toast.makeText(ControlMainAct.this, "连接成功", Toast.LENGTH_LONG).show();
-                    Intent intent2 = new Intent("com.qixiang.blesuccess");
-                    sendBroadcast(intent2);
-
-                    Intent intent = new Intent(ControlMainAct.this,ControlMainAct.class);
-                    startActivity(intent);
                     break;
                 case 122:
                     if(Tools.mBleService != null){
@@ -258,17 +244,30 @@ public class ControlMainAct extends AppCompatActivity implements  View.OnClickLi
                     Utils.LogE("dataTwoByte:   "+Utils.toHexString(dataTwoByte));
                     //maxSendData("0000"+Utils.toHexString(dataTwoByte)+"00000000",(byte)0x04);
                     break;
+                case 4601:
+                    Toast.makeText(ControlMainAct.this, "Linking...", Toast.LENGTH_LONG).show();
+                    reveiveFlag = true;
+                    maxSendData("0000810000000000",(byte)0xFF);
+                    break;
+                case 4602:
+                    maxSendData("0000"+Utils.toHexString(dataTwoByte)+"00000000",(byte)0x04);
+                    break;
                 default:
                     break;
             }
         };
     };
+
+    public BleDataImpl hanImpl;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        checkBluetoothPermission();
+        reveiveFlag = false;
         setContentView(R.layout.activity_control_main);
 
+        reveiveFlag = false;
         //得到屏幕尺寸信息
         dm = new DisplayMetrics();
         wm = (WindowManager) ControlMainAct.this.getSystemService(Context.WINDOW_SERVICE);
@@ -278,7 +277,8 @@ public class ControlMainAct extends AppCompatActivity implements  View.OnClickLi
 
         mFragmentManager = getSupportFragmentManager();
 
-        Fragment pf = new PlaysetFragment();
+        PlaysetFragment pf = new PlaysetFragment();
+            pf.setTheHandler(myHandler);
         Fragment cf = new ControlsetFragment();
         Fragment sf = new StudysetFragment();
         Fragment csf = new CodesetFragment();
@@ -290,9 +290,29 @@ public class ControlMainAct extends AppCompatActivity implements  View.OnClickLi
 
         mViewPagerFragmentAdapter =   new ViewPagerFragmentAdapter(mFragmentManager,mFragmentList);
         initView();
+
+        reveiveFlag = false;
+        mSendBle = new SendBle(this);
         //firstLinearLayout.setSelected(true);
+
+        registerBro();
     }
 
+    private void registerBro(){
+        IntentFilter itf = new IntentFilter();
+        itf.addAction("CONTROLLERDATA");
+        registerReceiver(brv,itf);
+    }
+    private BroadcastReceiver brv = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //Toast.makeText(ControlMainAct.this, "777777777777777777777.", Toast.LENGTH_LONG).show();
+            byte[] controlData = intent.getByteArrayExtra("data");
+            dataTwoByte = controlData;
+            Utils.LogE("controlData:::::::::::::::::::::::"+controlData.length);
+            myHandler.sendEmptyMessage(4602);
+        }
+    };
     ArrayList<String> unPermissionList;
     private void checkBluetoothPermission() {
         if (Build.VERSION.SDK_INT >= 23) {
@@ -522,6 +542,9 @@ public class ControlMainAct extends AppCompatActivity implements  View.OnClickLi
         }
     };
 
+    private boolean exit_activity = false;
+    public String tmp,hex;
+    private boolean connected_flag;
 
     public class BluetoothReceiver extends BroadcastReceiver {
         @Override
@@ -567,7 +590,6 @@ public class ControlMainAct extends AppCompatActivity implements  View.OnClickLi
         // TODO Auto-generated method stub
         super.onDestroy();
         exit_activity = true;
-
         this.unregisterReceiver(bluetoothReceiver);
         //unbindService(connection);
     }
@@ -628,7 +650,7 @@ public class ControlMainAct extends AppCompatActivity implements  View.OnClickLi
         mViewpager.addOnPageChangeListener(new ViewPagerOnPagerChangedLisenter());
         mViewpager.setAdapter(mViewPagerFragmentAdapter);
         mViewpager.setCurrentItem(0);
-        firstLinearLayoutGD.setColor(Color.parseColor("#49BAC8"));
+        firstLinearLayoutGD.setColor(getResources().getColor(R.color.color_fragment_header));
         updateBottomLinearLayoutSelect(true,false,false,false);
     }
 
@@ -669,19 +691,17 @@ public class ControlMainAct extends AppCompatActivity implements  View.OnClickLi
 
 
 
-
-
     @Override
     protected void onResume() {
         super.onResume();
     }
 
     private void SwitchColor(int position){
-        firstLinearLayoutGD.setColor(Color.parseColor("#FC4E57"));
-        secondLinearlayoutGD.setColor(Color.parseColor("#FC4E57"));
-        threeLinearLayoutGD.setColor(Color.parseColor("#FC4E57"));
-        fourLinearLayoutGD.setColor(Color.parseColor("#FC4E57"));
-        fiveLinearLayoutGD.setColor(Color.parseColor("#FC4E57"));
+        firstLinearLayoutGD.setColor(getResources().getColor(R.color.color_fragment_header));
+        secondLinearlayoutGD.setColor(getResources().getColor(R.color.color_fragment_header));
+        threeLinearLayoutGD.setColor(getResources().getColor(R.color.color_fragment_header));
+        fourLinearLayoutGD.setColor(getResources().getColor(R.color.color_fragment_header));
+        fiveLinearLayoutGD.setColor(getResources().getColor(R.color.color_fragment_header));
         switch (position){
             case 0:firstLinearLayoutGD.setColor(Color.parseColor("#2E43C0"));break;
             case 1:secondLinearlayoutGD.setColor(Color.parseColor("#41349e"));break;

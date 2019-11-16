@@ -89,7 +89,6 @@ public class BleConnectActivity extends Activity implements View.OnClickListener
 //                        Tools.mBleService.characterWrite2.setValue(hexToBytes(spliteArray[1]));
 //                        Tools.mBleService.mBluetoothGatt.writeCharacteristic(Tools.mBleService.characterWrite2);
 //                    }
-//
 //                }
             }
         }

@@ -17,6 +17,9 @@ public class PKActivity extends AppCompatActivity implements View.OnClickListene
         //setFullScreen();
     }
 
+    private void initView(){
+
+    }
 
     @Override
     public void onClick(View v) {

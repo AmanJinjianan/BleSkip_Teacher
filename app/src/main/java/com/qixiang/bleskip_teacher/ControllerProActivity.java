@@ -3,8 +3,6 @@ package com.qixiang.bleskip_teacher;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -19,17 +17,17 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
-import  com.qixiang.bleskip_teacher.BLE.MyListener;
-import  com.qixiang.bleskip_teacher.BLE.SendBle;
-import  com.qixiang.bleskip_teacher.BLE.Tools;
-import  com.qixiang.bleskip_teacher.Util.Utils;
+import com.qixiang.bleskip_teacher.BLE.MyListener;
+import com.qixiang.bleskip_teacher.BLE.SendBle;
+import com.qixiang.bleskip_teacher.BLE.Tools;
+import com.qixiang.bleskip_teacher.Util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class ControllerActivity extends Activity implements View.OnClickListener{
+public class ControllerProActivity extends Activity implements View.OnClickListener{
 
     public SeekBar theSeek;
     private final static int REQUEST_ENABLE_BT=2001;
@@ -56,7 +54,7 @@ public class ControllerActivity extends Activity implements View.OnClickListener
 
     Animation myAnimation;
     private SendBle mSendBle;
-    Button btn_stop,btn_up,btn_down,btn_left,btn_right;
+    Button btn_stop,btn_up,btn_down;
     ImageButton btn_more;
     ImageButton btn_back;
     @Override
@@ -64,18 +62,14 @@ public class ControllerActivity extends Activity implements View.OnClickListener
         super.onCreate(savedInstanceState);
 
         setFullScreen();
-        setContentView(R.layout.layout_control);
+        setContentView(R.layout.layout_controlpro);
         //checkBluetoothPermission();
         reveiveFlag = false;
         btn_more = (ImageButton)findViewById(R.id.btn_more2598);
         btn_more.setOnClickListener(this);
-        btn_left = (Button) findViewById(R.id.btn_left2598);
-        btn_right = (Button)findViewById(R.id.btn_right2598);
         btn_back = (ImageButton)findViewById(R.id.ib_control_back);
         btn_back.setOnClickListener(this);
 
-        btn_right.setOnTouchListener(MyTai);
-        btn_left.setOnTouchListener(MyTai);
 
         FrameLayout.LayoutParams ll = new FrameLayout.LayoutParams((int)(ControlMainAct.height*1.77),ControlMainAct.height);
         ll.gravity = Gravity.CENTER_HORIZONTAL;
@@ -96,7 +90,7 @@ public class ControllerActivity extends Activity implements View.OnClickListener
         // 定义全屏参数
         int flag = WindowManager.LayoutParams.FLAG_FULLSCREEN;
         // 获得当前窗体对象
-        Window window = ControllerActivity.this.getWindow();
+        Window window = ControllerProActivity.this.getWindow();
         // 设置当前窗体为全屏显示
         window.setFlags(flag, flag);
     }
@@ -208,7 +202,7 @@ public class ControllerActivity extends Activity implements View.OnClickListener
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             if(event.getAction()==MotionEvent.ACTION_CANCEL || event.getAction()==MotionEvent.ACTION_UP){
-                Toast.makeText(ControllerActivity.this, "UP", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ControllerProActivity.this, "UP", Toast.LENGTH_SHORT).show();
                 if(v.getId() == R.id.btn_left2598 || v.getId() == R.id.btn_right2598){
                     dataTwoByte[1] = 0;
                     if(timer34 != null){
@@ -218,7 +212,7 @@ public class ControllerActivity extends Activity implements View.OnClickListener
                     }
                 }
             } else  if(event.getAction()==MotionEvent.ACTION_DOWN){
-                Toast.makeText(ControllerActivity.this, "ACTION_DOWN", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ControllerProActivity.this, "ACTION_DOWN", Toast.LENGTH_SHORT).show();
                 switch (v.getId()){
                     case R.id.btn_left2598:
                         dataTwoByte[1] = 0x3C;

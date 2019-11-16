@@ -7,6 +7,10 @@ package com.qixiang.bleskip_teacher.MyView;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -20,12 +24,15 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
 import com.qixiang.bleskip_teacher.R;
+import com.qixiang.bleskip_teacher.Util.Utils;
 
 @SuppressLint("DrawAllocation")
 public class DrawView extends View {
@@ -35,6 +42,7 @@ public class DrawView extends View {
     private float preY;//起始点的y坐标值
     private Path path;    //路径
     public Paint paint = null;    //画笔
+    public Paint mEraserPaint = null;//橡皮擦
     Bitmap cacheBitmap = null;// 定义一个内存中的图片，该图片将作为缓冲区
     Canvas cacheCanvas = null;// 定义cacheBitmap上的Canvas对象
 
@@ -50,12 +58,12 @@ public class DrawView extends View {
         path = new Path();
         cacheCanvas.setBitmap(cacheBitmap);// 在cacheCanvas上绘制cacheBitmap
         paint = new Paint(Paint.DITHER_FLAG);
-        paint.setColor(Color.GREEN); // 设置默认的画笔颜色
+        paint.setColor(Color.RED); // 设置默认的画笔颜色
         // 设置画笔风格
         paint.setStyle(Paint.Style.STROKE);    //设置填充方式为描边
         paint.setStrokeJoin(Paint.Join.ROUND);        //设置笔刷的图形样式
         paint.setStrokeCap(Paint.Cap.ROUND);    //设置画笔转弯处的连接风格
-        paint.setStrokeWidth(5); // 设置默认笔触的宽度为5像素
+        paint.setStrokeWidth(50); // 设置默认笔触的宽度为5像素
         paint.setAntiAlias(true); // 使用抗锯齿功能
         paint.setDither(true); // 使用抖动效果
     }
@@ -74,12 +82,16 @@ public class DrawView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         // 获取触摸事件的发生位置
         float x = event.getX();
+        ar.add(x);
         float y = event.getY();
+        ar.add(y);
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 path.moveTo(x, y); // 将绘图的起始点移到（x,y）坐标点的位置
                 preX = x;
                 preY = y;
+                Utils.LogE("ACTION_DOWN:X"+preX+"  Y:"+preY);
+                invalidate();
                 break;
             case MotionEvent.ACTION_MOVE:
                 float dx = Math.abs(x - preX);
@@ -89,21 +101,109 @@ public class DrawView extends View {
                     preX = x;
                     preY = y;
                 }
+                invalidate();
+                //Utils.LogE("ACTION_MOVEeee:X"+preX+"  Y:"+preY);
                 break;
             case MotionEvent.ACTION_UP:
                 cacheCanvas.drawPath(path, paint); //绘制路径
                 path.reset();
+                Utils.LogE("ACTION_UPppp:X"+preX+"  Y:"+preY);
+                invalidate();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        diaClear();
+                    }
+                },1000);
+
                 break;
         }
-        invalidate();
+
         return true;        // 返回true表明处理方法已经处理该事件
     }
 
+    private void diaClear() {
+        //paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+        paint.setColor(Color.BLUE);
+        paint.setAlpha(0);
+        paint.setStrokeWidth(52);    //设置笔触的宽度
+        invalidate();
+        timer.schedule(task,1000,200);
+    }
+    private void diaClear2() {
+        //橡皮擦
+        mEraserPaint = new Paint();
+        mEraserPaint.setColor(Color.BLUE);
+        //mEraserPaint.setAlpha(0);
+        //这个属性是设置paint为橡皮擦重中之重
+        //这是重点
+        //下面这句代码是橡皮擦设置的重点
+        mEraserPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+        //上面这句代码是橡皮擦设置的重点（重要的事是不是一定要说三遍）
+        mEraserPaint.setAntiAlias(true);
+        mEraserPaint.setDither(true);
+        mEraserPaint.setStyle(Paint.Style.STROKE);
+        mEraserPaint.setStrokeJoin(Paint.Join.ROUND);
+        mEraserPaint.setStrokeWidth(55);
+        invalidate();
+        timer.schedule(task,1000,200);
+    }
+    public  ArrayList<Float> ar = new ArrayList<>();
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            float x = ar.get(index);
+            float y = ar.get(index+1);
+            if(index == 0){
+                path.moveTo(x, y); // 将绘图的起始点移到（x,y）坐标点的位置
+                preX = x;
+                preY = y;
+                index = index+2;
+                invalidate();
+            }else {
+                float dx = Math.abs(x - preX);
+                float dy = Math.abs(y - preY);
+                if (dx >= 5 || dy >= 5) { // 判断是否在允许的范围内
+                    path.quadTo(preX, preY, (x + preX) / 2, (y + preY) / 2);
+                    preX = x;
+                    preY = y;
+                }
+                invalidate();
+                index = index+2;
+                if(index+1 > ar.size()){
+                    invalidate();
+                    return;
+                }
+        }
+        }
+    };
+    int index =0;
+    Timer timer = new Timer();
+    TimerTask task = new TimerTask() {
+        @Override
+        public void run() {
+
+            if(index+1 > ar.size()){
+                timer.cancel();
+                ar.clear();
+                task.cancel();
+                return;
+            }
+            handler.sendEmptyMessage(1);
+        }
+    };
+
 
     public void clear() {
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-        paint.setColor(Color.GREEN);
-        paint.setStrokeWidth(50);    //设置笔触的宽度
+        //paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+
+        //Color.TRANSPARENT
+        paint.setColor(Color.YELLOW);
+        paint.setAlpha(0);
+        paint.setStrokeWidth(52);    //设置笔触的宽度
         invalidate();
     }
 
