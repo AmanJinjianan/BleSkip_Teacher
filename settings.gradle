@@ -1,1 +1,1 @@
-include ':app',  ':hellocharts-library', ':webtest', ':controller'
+include ':app', ':controller'

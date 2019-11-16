@@ -29,7 +29,6 @@ import java.util.TimerTask;
 
 public class ControllerProActivity extends Activity implements View.OnClickListener{
 
-    public SeekBar theSeek;
     private final static int REQUEST_ENABLE_BT=2001;
     private BluetoothDevice theDevice;
     private List<String> fdArrayList = new ArrayList<String>();
@@ -54,8 +53,6 @@ public class ControllerProActivity extends Activity implements View.OnClickListe
 
     Animation myAnimation;
     private SendBle mSendBle;
-    Button btn_stop,btn_up,btn_down;
-    ImageButton btn_more;
     ImageButton btn_back;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,20 +62,11 @@ public class ControllerProActivity extends Activity implements View.OnClickListe
         setContentView(R.layout.layout_controlpro);
         //checkBluetoothPermission();
         reveiveFlag = false;
-        btn_more = (ImageButton)findViewById(R.id.btn_more2598);
-        btn_more.setOnClickListener(this);
         btn_back = (ImageButton)findViewById(R.id.ib_control_back);
         btn_back.setOnClickListener(this);
 
-
         FrameLayout.LayoutParams ll = new FrameLayout.LayoutParams((int)(ControlMainAct.height*1.77),ControlMainAct.height);
         ll.gravity = Gravity.CENTER_HORIZONTAL;
-        findViewById(R.id.ll_control_center).setLayoutParams(ll);
-
-        theSeek = (SeekBar) findViewById(R.id.seekBar3);
-        theSeek.setProgressDrawable(null);
-        theSeek.setProgress(50);
-        theSeek.setOnSeekBarChangeListener(sChange);
 
         reveiveFlag = false;
         mSendBle = new SendBle(this);
@@ -95,53 +83,6 @@ public class ControllerProActivity extends Activity implements View.OnClickListe
         window.setFlags(flag, flag);
     }
 
-    private SeekBar.OnSeekBarChangeListener sChange = new SeekBar.OnSeekBarChangeListener() {
-        @Override
-        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            if(progress<47){//前进
-                //dataTwoByte[0] = 0x1A;
-                //将seekbar的波动范围映射成0x10-0x1F 十六个档位
-                dataTwoByte[0] = (byte)(0x10 | Utils.intToButeArray(Math.abs(46-progress)/3)[1]);
-                if(timer12 == null){
-                    timer12=new Timer();
-                    mt12 = new MyTimerTask();
-                    mt12.MyFlag = 1;
-                    timer12.schedule(mt12,0,200);
-                }
-            }else if(progress>54){//后退
-                //dataTwoByte[0] = 0x2A;
-                //将seekbar的波动范围映射成0x20-0x2F 十六个档位
-                dataTwoByte[0] = (byte)(0x20 | Utils.intToButeArray(Math.abs(55-progress)/3)[1]);
-                if(timer12 == null){
-                    timer12=new Timer();
-                    mt12 = new MyTimerTask();
-                    mt12.MyFlag = 2;
-                    timer12.schedule(mt12,0,200);
-                }
-            }
-            //Utils.LogE("progress:::::::::::::  :::::::::::::::"+Utils.toHexString(dataTwoByte));
-        }
-        @Override
-        public void onStartTrackingTouch(SeekBar seekBar) {
-            Utils.LogE("progress:  onStartTrackingTouch");
-        }
-
-        @Override
-        public void onStopTrackingTouch(SeekBar seekBar) {
-            Utils.LogE("progress:  onStopTrackingTouch");
-            theSeek.setProgress(50);
-            if(timer12 != null){
-                dataTwoByte[0] = 0;
-                intent.putExtra("data",dataTwoByte);
-                sendBroadcast(intent);
-                timer12.cancel();
-                //stopSendData();
-                mSendBle.stopSend();
-                timer12 = null;
-            }
-
-        }
-    };
     @Override
     protected void onPause() {
         // TODO Auto-generated method stub
@@ -168,10 +109,6 @@ public class ControllerProActivity extends Activity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.btn_more2598:
-                reveiveFlag = true;
-                //maxSendData("0000810000000000",(byte)0xFF);
-                break;
             case R.id.btn_left2598:
                 //maxSendData("00003A0000000000",(byte)0x03);
                 break;

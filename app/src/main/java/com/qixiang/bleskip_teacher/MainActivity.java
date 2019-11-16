@@ -38,16 +38,6 @@ import com.qixiang.bleskip_teacher.ViewAdapter.MyAdapter;
 import com.qixiang.bleskip_teacher.ViewAdapter.MyAdapterMission;
 import com.qixiang.bleskip_teacher.ViewAdapter.ViewPagerFragmentAdapter;
 
-import lecho.lib.hellocharts.gesture.ZoomType;
-import lecho.lib.hellocharts.listener.ColumnChartOnValueSelectListener;
-import lecho.lib.hellocharts.model.Axis;
-import lecho.lib.hellocharts.model.Column;
-import lecho.lib.hellocharts.model.ColumnChartData;
-import lecho.lib.hellocharts.model.SubcolumnValue;
-import lecho.lib.hellocharts.util.ChartUtils;
-import lecho.lib.hellocharts.view.Chart;
-import lecho.lib.hellocharts.view.ColumnChartView;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;

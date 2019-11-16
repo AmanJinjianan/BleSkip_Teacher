@@ -12,7 +12,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
@@ -28,7 +27,6 @@
         <activity android:name=".StudentInfoForApplyActivity">
             <intent-filter>
                 <action android:name="com.qixiang.bleskip.android_intent" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -41,7 +39,6 @@
         </activity>
         <activity android:name=".StuDetailForTeachActivity" />
         <activity android:name=".SQLiteActivity" />
-        <activity android:name=".Test3Char" />
         <activity
             android:name=".BleDataActivity"
             android:launchMode="singleInstance" />
