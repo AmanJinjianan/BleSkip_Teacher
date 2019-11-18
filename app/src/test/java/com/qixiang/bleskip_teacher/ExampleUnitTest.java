@@ -2,6 +2,8 @@ package com.qixiang.bleskip_teacher;
 
 import android.util.Log;
 
+import com.qixiang.bleskip_teacher.Util.DpUtils;
+
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -18,7 +20,7 @@ public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() throws Exception {
 
-        assertEquals(true, fgh(2,9));
+        //assertEquals(true, DpUtils(getA,9));
     }
 
     public boolean fgh(int hh,int pp){

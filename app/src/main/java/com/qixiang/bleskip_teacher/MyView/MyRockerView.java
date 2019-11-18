@@ -136,7 +136,8 @@ public class MyRockerView extends View {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RockerView);
 
         // 可移动区域背景
-        Drawable areaBackground = typedArray.getDrawable(R.styleable.RockerView_areaBackground);
+        //Drawable areaBackground = typedArray.getDrawable(R.styleable.RockerView_areaBackground);
+        Drawable areaBackground = getResources().getDrawable(R.drawable.eight_control_back);
         if (null != areaBackground) {
             // 设置了背景
             if (areaBackground instanceof BitmapDrawable) {

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_col">
@@ -12,69 +13,61 @@
         android:layout_marginTop="10dp"
         android:background="@drawable/btn_icon_back" />
     <LinearLayout
-        android:id="@+id/ll_control_center11"
+        android:id="@+id/ll_control_center"
         android:layout_width="1920px"
         android:layout_height="1080px"
         android:orientation="horizontal"
         android:layout_gravity="center_horizontal"
         android:background="@drawable/bg_item_col">
 
-<!--        <RelativeLayout-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:background="@color/colorPrimary"-->
-<!--            android:layout_weight="1">-->
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
 
 
-<!--            &lt;!&ndash;<RelativeLayout&ndash;&gt;-->
-<!--                &lt;!&ndash;android:layout_width="450px"&ndash;&gt;-->
-<!--                &lt;!&ndash;android:layout_height="450px"&ndash;&gt;-->
-<!--                &lt;!&ndash;android:layout_alignParentBottom="true"&ndash;&gt;-->
-<!--                &lt;!&ndash;android:layout_alignParentEnd="true"&ndash;&gt;-->
-<!--                &lt;!&ndash;android:layout_marginBottom="67dp"&ndash;&gt;-->
-<!--                &lt;!&ndash;android:background="@drawable/eight_control_back">&ndash;&gt;-->
+            <RelativeLayout
+                android:layout_width="450px"
+                android:layout_height="450px"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginBottom="194px"
+                android:layout_marginRight="14px">
 
-<!--                &lt;!&ndash;<com.qixiang.bleskip_teacher.MyView.MyRockerView&ndash;&gt;-->
-<!--                    &lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
-<!--                    &lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
-<!--                    &lt;!&ndash;android:layout_alignParentStart="true"&ndash;&gt;-->
-<!--                    &lt;!&ndash;android:layout_alignParentTop="true"/>&ndash;&gt;-->
-<!--                &lt;!&ndash;&lt;!&ndash;<ImageButton&ndash;&gt;&ndash;&gt;-->
-<!--                    &lt;!&ndash;&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;&ndash;&gt;-->
-<!--                    &lt;!&ndash;&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;&ndash;&gt;-->
-<!--                    &lt;!&ndash;&lt;!&ndash;android:layout_alignParentStart="true"&ndash;&gt;&ndash;&gt;-->
-<!--                    &lt;!&ndash;&lt;!&ndash;android:layout_alignParentTop="true"&ndash;&gt;&ndash;&gt;-->
-<!--                    &lt;!&ndash;&lt;!&ndash;android:background="@drawable/eight_control_center" />&ndash;&gt;&ndash;&gt;-->
-<!--            &lt;!&ndash;</RelativeLayout>&ndash;&gt;-->
-<!--        </RelativeLayout>-->
+                <com.qixiang.bleskip_teacher.MyView.MyRockerView
+                    android:layout_width="980px"
+                    android:layout_height="980px"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="0dp" />
+                <!--<ImageButton-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_alignParentStart="true"-->
+                    <!--android:layout_alignParentTop="true"-->
+                    <!--android:background="@drawable/eight_control_center" />-->
+            </RelativeLayout>
+        </RelativeLayout>
 
-<!--        <RelativeLayout-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:layout_alignParentEnd="true"-->
-<!--            android:layout_alignParentTop="true"-->
-<!--            android:background="@color/colorAccent"-->
-<!--            android:layout_weight="1">-->
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_weight="1">
 
-<!--            <Button-->
-<!--                android:id="@+id/button3"-->
-<!--                android:layout_width="270px"-->
-<!--                android:layout_height="121px"-->
-<!--                android:layout_alignParentTop="true"-->
-<!--                android:layout_centerHorizontal="true"-->
-<!--                android:layout_marginTop="505px"-->
-<!--                android:background="@drawable/btn_on" />-->
+            <Button
+                android:id="@+id/button2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Button" />
+        </RelativeLayout>
 
-<!--        </RelativeLayout>-->
-
-<!--        <RelativeLayout-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:layout_alignParentTop="true"-->
-<!--            android:background="@color/colorPrimary"-->
-<!--            android:layout_weight="1">-->
-
-<!--        </RelativeLayout>-->
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_weight="1"/>
 
     </LinearLayout>
 

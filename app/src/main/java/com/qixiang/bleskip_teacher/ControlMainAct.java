@@ -56,7 +56,7 @@ public class ControlMainAct extends AppCompatActivity implements  View.OnClickLi
     public WindowManager wm;
     public DisplayMetrics dm;
     public static int width;         // 屏幕宽度（像素）
-    public static int height;       // 屏幕高度（像素）
+    public static int height = 1080;       // 屏幕高度（像素）
     private BluetoothDevice theDevice;
     String data = "",theReceiveData;
     public boolean reveiveFlag = false;

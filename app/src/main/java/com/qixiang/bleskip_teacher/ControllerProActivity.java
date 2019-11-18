@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.qixiang.bleskip_teacher.BLE.MyListener;
 import com.qixiang.bleskip_teacher.BLE.SendBle;
 import com.qixiang.bleskip_teacher.BLE.Tools;
+import com.qixiang.bleskip_teacher.Util.DpUtils;
 import com.qixiang.bleskip_teacher.Util.Utils;
 
 import java.util.ArrayList;
@@ -68,6 +69,7 @@ public class ControllerProActivity extends Activity implements View.OnClickListe
         FrameLayout.LayoutParams ll = new FrameLayout.LayoutParams((int)(ControlMainAct.height*1.77),ControlMainAct.height);
         ll.gravity = Gravity.CENTER_HORIZONTAL;
 
+        int ss = DpUtils.dp2px(ControllerProActivity.this,67);
         reveiveFlag = false;
         mSendBle = new SendBle(this);
     }
