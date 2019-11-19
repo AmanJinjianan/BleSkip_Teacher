@@ -32,62 +32,37 @@ import java.util.TimerTask;
 public class ControllerActivity extends Activity implements View.OnClickListener{
 
     public SeekBar theSeek;
-    private final static int REQUEST_ENABLE_BT=2001;
-    private BluetoothDevice theDevice;
-    private List<String> fdArrayList = new ArrayList<String>();
-    private boolean connected_flag;
-    private boolean exit_activity = false;
-    public String tmp,hex;
     public boolean reveiveFlag = false;
 
-    public  byte theRandowData = 0;
-    public  byte[] theTwoByte = new byte[]{0x00,0x00};
-
-    //保存下位机设备ID
-    public byte theOneByte=0;
-
-    String data = "",theReceiveData;
-
-    int ppCount = 0;
-    String remainString = "";
-
-    //代表在第几个“发收周期”，初始为"1"（一发一收代表一个周期）
-    int recycleCount=1;
-
-    Animation myAnimation;
+    String data = "";
     private SendBle mSendBle;
-    Button btn_stop,btn_up,btn_down,btn_left,btn_right;
-    ImageButton btn_more;
-    ImageButton btn_back;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setFullScreen();
         setContentView(R.layout.layout_control);
-        //checkBluetoothPermission();
         reveiveFlag = false;
-        btn_more = (ImageButton)findViewById(R.id.btn_more2598);
-        btn_more.setOnClickListener(this);
-        btn_left = (Button) findViewById(R.id.btn_left2598);
-        btn_right = (Button)findViewById(R.id.btn_right2598);
-        btn_back = (ImageButton)findViewById(R.id.ib_control_back);
-        btn_back.setOnClickListener(this);
 
-        btn_right.setOnTouchListener(MyTai);
-        btn_left.setOnTouchListener(MyTai);
+        initView();
 
-        FrameLayout.LayoutParams ll = new FrameLayout.LayoutParams((int)(ControlMainAct.height*1.77),ControlMainAct.height);
-        ll.gravity = Gravity.CENTER_HORIZONTAL;
-        findViewById(R.id.ll_control_center).setLayoutParams(ll);
-
-        theSeek = (SeekBar) findViewById(R.id.seekBar3);
         theSeek.setProgressDrawable(null);
         theSeek.setProgress(50);
         theSeek.setOnSeekBarChangeListener(sChange);
 
         reveiveFlag = false;
         mSendBle = new SendBle(this);
+    }
+    void initView(){
+        findViewById(R.id.btn_more_control).setOnClickListener(this);
+        findViewById(R.id.ib_control_back).setOnClickListener(this);
+
+        findViewById(R.id.btn_right_control).setOnTouchListener(MyTai);
+        findViewById(R.id.btn_left_control).setOnTouchListener(MyTai);
+
+        FrameLayout.LayoutParams ll = new FrameLayout.LayoutParams((int)(ControlMainAct.height*1.77),ControlMainAct.height);
+        ll.gravity = Gravity.CENTER_HORIZONTAL;
+        findViewById(R.id.ll_control_center).setLayoutParams(ll);
+        theSeek = (SeekBar) findViewById(R.id.seekBar3);
     }
     void setFullScreen(){
         // 隐藏标题栏
@@ -174,14 +149,14 @@ public class ControllerActivity extends Activity implements View.OnClickListener
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.btn_more2598:
+            case R.id.btn_more_control:
                 reveiveFlag = true;
                 //maxSendData("0000810000000000",(byte)0xFF);
                 break;
-            case R.id.btn_left2598:
+            case R.id.btn_left_control:
                 //maxSendData("00003A0000000000",(byte)0x03);
                 break;
-            case R.id.btn_right2598:
+            case R.id.btn_right_control:
                 //maxSendData("00004A0000000000",(byte)0x04);
                 break;
             case R.id.ib_control_back:
@@ -209,7 +184,7 @@ public class ControllerActivity extends Activity implements View.OnClickListener
         public boolean onTouch(View v, MotionEvent event) {
             if(event.getAction()==MotionEvent.ACTION_CANCEL || event.getAction()==MotionEvent.ACTION_UP){
                 Toast.makeText(ControllerActivity.this, "UP", Toast.LENGTH_SHORT).show();
-                if(v.getId() == R.id.btn_left2598 || v.getId() == R.id.btn_right2598){
+                if(v.getId() == R.id.btn_left_control || v.getId() == R.id.btn_right_control){
                     dataTwoByte[1] = 0;
                     if(timer34 != null){
                         timer34.cancel();
@@ -220,13 +195,13 @@ public class ControllerActivity extends Activity implements View.OnClickListener
             } else  if(event.getAction()==MotionEvent.ACTION_DOWN){
                 Toast.makeText(ControllerActivity.this, "ACTION_DOWN", Toast.LENGTH_SHORT).show();
                 switch (v.getId()){
-                    case R.id.btn_left2598:
+                    case R.id.btn_left_control:
                         dataTwoByte[1] = 0x3C;
                         timer34=new Timer();
                         mt34 = new MyTimerTask();
                         timer34.schedule(mt34,0,200);
                         break;
-                    case R.id.btn_right2598:
+                    case R.id.btn_right_control:
                         dataTwoByte[1] = 0x4C;
                         timer34=new Timer();
                         mt34 = new MyTimerTask();

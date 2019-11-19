@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.qixiang.bleskip_teacher.BLE.MyListener;
 import com.qixiang.bleskip_teacher.BLE.SendBle;
 import com.qixiang.bleskip_teacher.BLE.Tools;
+import com.qixiang.bleskip_teacher.MyView.MyRockerView;
 import com.qixiang.bleskip_teacher.Util.DpUtils;
 import com.qixiang.bleskip_teacher.Util.Utils;
 
@@ -28,7 +29,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class ControllerProActivity extends Activity implements View.OnClickListener{
+public class ControllerProActivity extends Activity implements View.OnClickListener, MyRockerView.OnShakeListener {
 
     private final static int REQUEST_ENABLE_BT=2001;
     private BluetoothDevice theDevice;
@@ -54,7 +55,7 @@ public class ControllerProActivity extends Activity implements View.OnClickListe
 
     Animation myAnimation;
     private SendBle mSendBle;
-    ImageButton btn_back;
+    private MyRockerView myRockerView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,15 +64,28 @@ public class ControllerProActivity extends Activity implements View.OnClickListe
         setContentView(R.layout.layout_controlpro);
         //checkBluetoothPermission();
         reveiveFlag = false;
-        btn_back = (ImageButton)findViewById(R.id.ib_control_back);
-        btn_back.setOnClickListener(this);
+        initView();
 
         FrameLayout.LayoutParams ll = new FrameLayout.LayoutParams((int)(ControlMainAct.height*1.77),ControlMainAct.height);
         ll.gravity = Gravity.CENTER_HORIZONTAL;
 
-        int ss = DpUtils.dp2px(ControllerProActivity.this,67);
         reveiveFlag = false;
         mSendBle = new SendBle(this);
+    }
+    void initView(){
+        findViewById(R.id.ib_control_pro_back).setOnClickListener(this);
+
+        findViewById(R.id.btn_left_down).setOnClickListener(this);
+        findViewById(R.id.btn_left_up).setOnClickListener(this);
+        findViewById(R.id.btn_right_down).setOnClickListener(this);
+        findViewById(R.id.btn_right_up).setOnClickListener(this);
+
+        findViewById(R.id.btn_left_pro).setOnClickListener(this);
+        findViewById(R.id.btn_right_pro).setOnClickListener(this);
+
+        myRockerView = (MyRockerView) findViewById(R.id.act_myrockview);
+        myRockerView.setOnShakeListener(MyRockerView.DirectionMode.DIRECTION_8,this);
+
     }
     void setFullScreen(){
         // 隐藏标题栏
@@ -111,30 +125,56 @@ public class ControllerProActivity extends Activity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.btn_left2598:
+            case R.id.btn_left_pro:
                 //maxSendData("00003A0000000000",(byte)0x03);
                 break;
-            case R.id.btn_right2598:
+            case R.id.btn_right_pro:
                 //maxSendData("00004A0000000000",(byte)0x04);
                 break;
-            case R.id.ib_control_back:
+            case R.id.btn_left_up:
+                //maxSendData("00003A0000000000",(byte)0x03);
+                break;
+            case R.id.btn_right_up:
+                Tools.setLog("ControllerPro","gggggggggggggggggggggggggg");
+                //maxSendData("00004A0000000000",(byte)0x04);
+                break;
+            case R.id.btn_left_down:
+                //maxSendData("00003A0000000000",(byte)0x03);
+                break;
+            case R.id.btn_right_down:
+                //maxSendData("00004A0000000000",(byte)0x04);
+                break;
+            case R.id.ib_control_pro_back:
                 this.finish();
                 break;
 
         }
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void direction(MyRockerView.Direction direction,float distance) {
+        Tools.setLog("Rocker","Direction:::::"+direction +" distance:"+distance);
+    }
+
+    @Override
+    public void onFinish() {
+
+    }
+
     class MyTimerTask extends TimerTask {
-        public int MyFlag = 0;
         @Override
         public void run() {
-            Utils.LogE("...........................................................................................");
-            //myHandler2.sendEmptyMessage(4600);
             intent.putExtra("data",dataTwoByte);
             sendBroadcast(intent);
         }
     }
-    MyTimerTask mt12,mt34;
-    Timer timer12,timer34;
+    MyTimerTask mt34;
+    Timer timer34;
 
     byte[] dataTwoByte = new byte[2];
     private View.OnTouchListener MyTai = new View.OnTouchListener() {
@@ -142,7 +182,7 @@ public class ControllerProActivity extends Activity implements View.OnClickListe
         public boolean onTouch(View v, MotionEvent event) {
             if(event.getAction()==MotionEvent.ACTION_CANCEL || event.getAction()==MotionEvent.ACTION_UP){
                 Toast.makeText(ControllerProActivity.this, "UP", Toast.LENGTH_SHORT).show();
-                if(v.getId() == R.id.btn_left2598 || v.getId() == R.id.btn_right2598){
+                if(v.getId() == R.id.btn_left_pro|| v.getId() == R.id.btn_right_pro){
                     dataTwoByte[1] = 0;
                     if(timer34 != null){
                         timer34.cancel();
@@ -153,13 +193,13 @@ public class ControllerProActivity extends Activity implements View.OnClickListe
             } else  if(event.getAction()==MotionEvent.ACTION_DOWN){
                 Toast.makeText(ControllerProActivity.this, "ACTION_DOWN", Toast.LENGTH_SHORT).show();
                 switch (v.getId()){
-                    case R.id.btn_left2598:
+                    case R.id.btn_left_pro:
                         dataTwoByte[1] = 0x3C;
                         timer34=new Timer();
                         mt34 = new MyTimerTask();
                         timer34.schedule(mt34,0,200);
                         break;
-                    case R.id.btn_right2598:
+                    case R.id.btn_right_pro:
                         dataTwoByte[1] = 0x4C;
                         timer34=new Timer();
                         mt34 = new MyTimerTask();

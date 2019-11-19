@@ -27,7 +27,7 @@
             >
 
             <Button
-                android:id="@+id/btn_left2598"
+                android:id="@+id/btn_left_control"
                 android:layout_width="193px"
                 android:layout_height="247px"
                 android:layout_alignParentBottom="true"
@@ -37,12 +37,12 @@
                 android:background="@drawable/btn_left" />
 
             <Button
-                android:id="@+id/btn_right2598"
+                android:id="@+id/btn_right_control"
                 android:layout_width="193px"
                 android:layout_height="247px"
-                android:layout_alignBottom="@+id/btn_left2598"
+                android:layout_alignBottom="@+id/btn_left_control"
                 android:layout_marginStart="38px"
-                android:layout_toEndOf="@+id/btn_left2598"
+                android:layout_toEndOf="@+id/btn_left_control"
                 android:background="@drawable/btn_right" />
 
 
@@ -86,7 +86,7 @@
                 />
 
             <ImageButton
-                android:id="@+id/btn_more2598"
+                android:id="@+id/btn_more_control"
                 android:layout_width="216px"
                 android:layout_height="95px"
                 android:layout_alignTop="@+id/imageButton10"
