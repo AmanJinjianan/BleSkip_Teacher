@@ -40,7 +40,6 @@ public class DrawActivity extends Activity implements View.OnClickListener{
         findViewById(R.id.ibtn_draw).setOnClickListener(this);
         //PermisionUtils.verifyStoragePermissions(this);   //获取手机SD卡读取权限
 
-
          dv = (DrawView) findViewById(R.id.drawView1);    //获取自定义的绘图视图
     }
 

@@ -2,7 +2,6 @@ package com.qixiang.bleskip_teacher;
 
 
 import android.app.Activity;
-import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -10,50 +9,32 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
-import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.qixiang.bleskip_teacher.BLE.MyListener;
 import com.qixiang.bleskip_teacher.BLE.SendBle;
 import com.qixiang.bleskip_teacher.BLE.Tools;
 import com.qixiang.bleskip_teacher.MyView.MyRockerView;
-import com.qixiang.bleskip_teacher.Util.DpUtils;
-import com.qixiang.bleskip_teacher.Util.Utils;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class ControllerProActivity extends Activity implements View.OnClickListener, MyRockerView.OnShakeListener {
 
-    private final static int REQUEST_ENABLE_BT=2001;
-    private BluetoothDevice theDevice;
-    private List<String> fdArrayList = new ArrayList<String>();
-    private boolean connected_flag;
-    private boolean exit_activity = false;
-    public String tmp,hex;
     public boolean reveiveFlag = false;
 
-    public  byte theRandowData = 0;
-    public  byte[] theTwoByte = new byte[]{0x00,0x00};
+    private Intent intent = new Intent("CONTROLLERDATA");
 
+    private MyTimerTask mt34;
+    private Timer timer34;
+
+    //指令参数
+    byte[] commandTwoBytes = new byte[2];
     //保存下位机设备ID
     public byte theOneByte=0;
 
-    String data = "",theReceiveData;
-
-    int ppCount = 0;
-    String remainString = "";
-
-    //代表在第几个“发收周期”，初始为"1"（一发一收代表一个周期）
-    int recycleCount=1;
-
-    Animation myAnimation;
+    String data = "";
     private SendBle mSendBle;
     private MyRockerView myRockerView;
     @Override
@@ -85,7 +66,6 @@ public class ControllerProActivity extends Activity implements View.OnClickListe
 
         myRockerView = (MyRockerView) findViewById(R.id.act_myrockview);
         myRockerView.setOnShakeListener(MyRockerView.DirectionMode.DIRECTION_8,this);
-
     }
     void setFullScreen(){
         // 隐藏标题栏
@@ -98,14 +78,6 @@ public class ControllerProActivity extends Activity implements View.OnClickListe
         // 设置当前窗体为全屏显示
         window.setFlags(flag, flag);
     }
-
-    @Override
-    protected void onPause() {
-        // TODO Auto-generated method stub
-        super.onPause();
-    }
-
-
     public MyListener listener = new MyListener() {
         @Override
         public void readData(byte[] var1, String var2) {}
@@ -115,40 +87,35 @@ public class ControllerProActivity extends Activity implements View.OnClickListe
             Tools.setLog("log1", "..........................onSendStatus......");
         }
     };
-    @Override
-    protected void onDestroy() {
-        // TODO Auto-generated method stub
-        super.onDestroy();
-    }
-    Intent intent = new Intent("CONTROLLERDATA");
 
     @Override
     public void onClick(View v) {
+        if(v.getId() == R.id.ib_control_pro_back){
+            this.finish();
+            return;
+        }
         switch (v.getId()){
             case R.id.btn_left_pro:
-                //maxSendData("00003A0000000000",(byte)0x03);
+                commandTwoBytes[0] = (byte)0xA6;commandTwoBytes[1] = (byte)0xB6;
                 break;
             case R.id.btn_right_pro:
-                //maxSendData("00004A0000000000",(byte)0x04);
+                commandTwoBytes[0] = (byte)0xA9;commandTwoBytes[1] = (byte)0xB9;
                 break;
             case R.id.btn_left_up:
-                //maxSendData("00003A0000000000",(byte)0x03);
+                commandTwoBytes[0] = (byte)0xA6;commandTwoBytes[1] = (byte)0xB0;
                 break;
             case R.id.btn_right_up:
-                Tools.setLog("ControllerPro","gggggggggggggggggggggggggg");
-                //maxSendData("00004A0000000000",(byte)0x04);
+                commandTwoBytes[0] = (byte)0xA9;commandTwoBytes[1] = (byte)0xB0;
                 break;
             case R.id.btn_left_down:
-                //maxSendData("00003A0000000000",(byte)0x03);
+                commandTwoBytes[0] = (byte)0xA9;commandTwoBytes[1] = (byte)0xB9;
                 break;
             case R.id.btn_right_down:
-                //maxSendData("00004A0000000000",(byte)0x04);
+                commandTwoBytes[0] = (byte)0xA0;commandTwoBytes[1] = (byte)0xB6;
                 break;
-            case R.id.ib_control_pro_back:
-                this.finish();
-                break;
-
         }
+        intent.putExtra("data",commandTwoBytes);
+        sendBroadcast(intent);
     }
 
     @Override
@@ -158,32 +125,55 @@ public class ControllerProActivity extends Activity implements View.OnClickListe
 
     @Override
     public void direction(MyRockerView.Direction direction,float distance) {
+        switch (direction){
+            case DIRECTION_LEFT://左 A6B9
+                commandTwoBytes[0] = (byte)0xA6;commandTwoBytes[1] = (byte)0xB6;
+                break;
+            case DIRECTION_RIGHT://右 A9B6
+                commandTwoBytes[0] = (byte)0xA9;commandTwoBytes[1] = (byte)0xB6;
+                break;
+            case DIRECTION_UP://上 AABA
+                commandTwoBytes[0] = (byte)0xAA;commandTwoBytes[1] = (byte)0xBA;
+                break;
+            case DIRECTION_DOWN://下 A5B5
+                commandTwoBytes[0] = (byte)0xA5;commandTwoBytes[1] = (byte)0xB5;
+                break;
+            case DIRECTION_UP_LEFT://左上 A2B8
+                commandTwoBytes[0] = (byte)0xA2;commandTwoBytes[1] = (byte)0xB8;
+                break;
+            case DIRECTION_UP_RIGHT://右上 A8B2
+                commandTwoBytes[0] = (byte)0xA8;commandTwoBytes[1] = (byte)0xB2;
+                break;
+            case DIRECTION_DOWN_LEFT://左下 A4B1
+                commandTwoBytes[0] = (byte)0xA4;commandTwoBytes[1] = (byte)0xB1;
+                break;
+            case DIRECTION_DOWN_RIGHT://右下 A1B4
+                commandTwoBytes[0] = (byte)0xA1;commandTwoBytes[1] = (byte)0xB4;
+                break;
+        }
+        intent.putExtra("data",commandTwoBytes);
+        sendBroadcast(intent);
         Tools.setLog("Rocker","Direction:::::"+direction +" distance:"+distance);
     }
 
     @Override
-    public void onFinish() {
-
-    }
+    public void onFinish() {}
 
     class MyTimerTask extends TimerTask {
         @Override
         public void run() {
-            intent.putExtra("data",dataTwoByte);
+            intent.putExtra("data",commandTwoBytes);
             sendBroadcast(intent);
         }
     }
-    MyTimerTask mt34;
-    Timer timer34;
 
-    byte[] dataTwoByte = new byte[2];
     private View.OnTouchListener MyTai = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             if(event.getAction()==MotionEvent.ACTION_CANCEL || event.getAction()==MotionEvent.ACTION_UP){
                 Toast.makeText(ControllerProActivity.this, "UP", Toast.LENGTH_SHORT).show();
                 if(v.getId() == R.id.btn_left_pro|| v.getId() == R.id.btn_right_pro){
-                    dataTwoByte[1] = 0;
+                    commandTwoBytes[1] = 0;
                     if(timer34 != null){
                         timer34.cancel();
                         //stopSendData();
@@ -194,13 +184,13 @@ public class ControllerProActivity extends Activity implements View.OnClickListe
                 Toast.makeText(ControllerProActivity.this, "ACTION_DOWN", Toast.LENGTH_SHORT).show();
                 switch (v.getId()){
                     case R.id.btn_left_pro:
-                        dataTwoByte[1] = 0x3C;
+                        commandTwoBytes[1] = 0x3C;
                         timer34=new Timer();
                         mt34 = new MyTimerTask();
                         timer34.schedule(mt34,0,200);
                         break;
                     case R.id.btn_right_pro:
-                        dataTwoByte[1] = 0x4C;
+                        commandTwoBytes[1] = 0x4C;
                         timer34=new Timer();
                         mt34 = new MyTimerTask();
                         timer34.schedule(mt34,0,200);
@@ -210,7 +200,5 @@ public class ControllerProActivity extends Activity implements View.OnClickListe
             return false;
         }
     };
-
-
 }
 

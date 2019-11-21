@@ -73,7 +73,7 @@ public class Utils {
     public static String SDL_table_Name ="";
 
     public static void LogE(String s){
-        Log.e("falter1",s);
+        Log.e("filter1",s);
     }
 
     public static byte taskNum = -1;

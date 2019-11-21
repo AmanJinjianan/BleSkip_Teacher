@@ -12,6 +12,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -46,8 +47,10 @@ public class DrawView extends View {
     Bitmap cacheBitmap = null;// 定义一个内存中的图片，该图片将作为缓冲区
     Canvas cacheCanvas = null;// 定义cacheBitmap上的Canvas对象
 
+    private Context theContext;
     public DrawView(Context context, AttributeSet set) {
         super(context, set);
+        theContext = context;
         view_width = context.getResources().getDisplayMetrics().widthPixels; // 获取屏幕的宽度
         view_height = context.getResources().getDisplayMetrics().heightPixels; // 获取屏幕的高度
         System.out.println(view_width + "*" + view_height);
@@ -90,7 +93,7 @@ public class DrawView extends View {
                 path.moveTo(x, y); // 将绘图的起始点移到（x,y）坐标点的位置
                 preX = x;
                 preY = y;
-                Utils.LogE("ACTION_DOWN:X"+preX+"  Y:"+preY);
+                Utils.LogE("ACTION_下下。。。。。。。");
                 invalidate();
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -101,13 +104,14 @@ public class DrawView extends View {
                     preX = x;
                     preY = y;
                 }
+                Utils.LogE("ACTION_中中。。。。。。。");
                 invalidate();
                 //Utils.LogE("ACTION_MOVEeee:X"+preX+"  Y:"+preY);
                 break;
             case MotionEvent.ACTION_UP:
                 cacheCanvas.drawPath(path, paint); //绘制路径
                 path.reset();
-                Utils.LogE("ACTION_UPppp:X"+preX+"  Y:"+preY);
+                Utils.LogE("ACTION_起起。。。。。。。");
                 invalidate();
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -129,7 +133,9 @@ public class DrawView extends View {
         paint.setAlpha(0);
         paint.setStrokeWidth(52);    //设置笔触的宽度
         invalidate();
-        timer.schedule(task,1000,200);
+        if(timer == null)
+            timer = new Timer();
+        timer.schedule(new MyTimerTask(),1000,200);
     }
     private void diaClear2() {
         //橡皮擦
@@ -147,7 +153,9 @@ public class DrawView extends View {
         mEraserPaint.setStrokeJoin(Paint.Join.ROUND);
         mEraserPaint.setStrokeWidth(55);
         invalidate();
-        timer.schedule(task,1000,200);
+        if(timer == null)
+            timer = new Timer();
+        timer.schedule(new MyTimerTask(),1000,200);
     }
     public  ArrayList<Float> ar = new ArrayList<>();
     private Handler handler = new Handler(){
@@ -180,26 +188,38 @@ public class DrawView extends View {
         }
     };
     int index =0;
-    Timer timer = new Timer();
-    TimerTask task = new TimerTask() {
+    Timer timer;
+
+    class MyTimerTask extends TimerTask{
         @Override
         public void run() {
 
             if(index+1 > ar.size()){
+                cacheCanvas.drawPath(path, paint); //绘制路径
+                path.reset();
+
+                invalidate();
                 timer.cancel();
                 ar.clear();
-                task.cancel();
+                this.cancel();
+                timer = null;
+                ((Activity)theContext).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(theContext,"完了",Toast.LENGTH_SHORT).show();
+
+                        nothing();
+                    }
+                });
                 return;
             }
             handler.sendEmptyMessage(1);
         }
-    };
-
+    }
 
     public void clear() {
         //paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
-
         //Color.TRANSPARENT
         paint.setColor(Color.YELLOW);
         paint.setAlpha(0);
@@ -214,7 +234,6 @@ public class DrawView extends View {
     }
 
     public void nothing() {
-
         cacheBitmap = null;
         // 创建一个与该View相同大小的缓存区
         cacheBitmap = Bitmap.createBitmap(view_width, view_height,

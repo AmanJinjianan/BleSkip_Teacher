@@ -2,9 +2,6 @@ package com.qixiang.bleskip_teacher;
 
 
 import android.app.Activity;
-import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -12,28 +9,27 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
-import  com.qixiang.bleskip_teacher.BLE.MyListener;
-import  com.qixiang.bleskip_teacher.BLE.SendBle;
-import  com.qixiang.bleskip_teacher.BLE.Tools;
-import  com.qixiang.bleskip_teacher.Util.Utils;
+import com.qixiang.bleskip_teacher.BLE.MyListener;
+import com.qixiang.bleskip_teacher.BLE.SendBle;
+import com.qixiang.bleskip_teacher.BLE.Tools;
+import com.qixiang.bleskip_teacher.Util.Utils;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class ControllerActivity extends Activity implements View.OnClickListener{
 
+    private MyTimerTask mt12,mt34;
+    private Timer timer12,timer34;
+    //指令参数
+    byte[] commandTwoBytes = new byte[2];
     public SeekBar theSeek;
     public boolean reveiveFlag = false;
-
+    private Intent intent = new Intent("CONTROLLERDATA");
     String data = "";
     private SendBle mSendBle;
     @Override
@@ -80,9 +76,9 @@ public class ControllerActivity extends Activity implements View.OnClickListener
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if(progress<47){//前进
-                //dataTwoByte[0] = 0x1A;
+                //commandTwoBytes[0] = 0x1A;
                 //将seekbar的波动范围映射成0x10-0x1F 十六个档位
-                dataTwoByte[0] = (byte)(0x10 | Utils.intToButeArray(Math.abs(46-progress)/3)[1]);
+                commandTwoBytes[0] = (byte)(0x10 | Utils.intToButeArray(Math.abs(46-progress)/3)[1]);
                 if(timer12 == null){
                     timer12=new Timer();
                     mt12 = new MyTimerTask();
@@ -90,9 +86,9 @@ public class ControllerActivity extends Activity implements View.OnClickListener
                     timer12.schedule(mt12,0,200);
                 }
             }else if(progress>54){//后退
-                //dataTwoByte[0] = 0x2A;
+                //commandTwoBytes[0] = 0x2A;
                 //将seekbar的波动范围映射成0x20-0x2F 十六个档位
-                dataTwoByte[0] = (byte)(0x20 | Utils.intToButeArray(Math.abs(55-progress)/3)[1]);
+                commandTwoBytes[0] = (byte)(0x20 | Utils.intToButeArray(Math.abs(55-progress)/3)[1]);
                 if(timer12 == null){
                     timer12=new Timer();
                     mt12 = new MyTimerTask();
@@ -100,7 +96,6 @@ public class ControllerActivity extends Activity implements View.OnClickListener
                     timer12.schedule(mt12,0,200);
                 }
             }
-            //Utils.LogE("progress:::::::::::::  :::::::::::::::"+Utils.toHexString(dataTwoByte));
         }
         @Override
         public void onStartTrackingTouch(SeekBar seekBar) {
@@ -112,8 +107,8 @@ public class ControllerActivity extends Activity implements View.OnClickListener
             Utils.LogE("progress:  onStopTrackingTouch");
             theSeek.setProgress(50);
             if(timer12 != null){
-                dataTwoByte[0] = 0;
-                intent.putExtra("data",dataTwoByte);
+                commandTwoBytes[0] = 0;
+                intent.putExtra("data",commandTwoBytes);
                 sendBroadcast(intent);
                 timer12.cancel();
                 //stopSendData();
@@ -139,12 +134,6 @@ public class ControllerActivity extends Activity implements View.OnClickListener
             Tools.setLog("log1", "..........................onSendStatus......");
         }
     };
-    @Override
-    protected void onDestroy() {
-        // TODO Auto-generated method stub
-        super.onDestroy();
-    }
-    Intent intent = new Intent("CONTROLLERDATA");
 
     @Override
     public void onClick(View v) {
@@ -171,21 +160,18 @@ public class ControllerActivity extends Activity implements View.OnClickListener
         public void run() {
             Utils.LogE("...........................................................................................");
             //myHandler2.sendEmptyMessage(4600);
-            intent.putExtra("data",dataTwoByte);
+            intent.putExtra("data",commandTwoBytes);
             sendBroadcast(intent);
         }
     }
-    MyTimerTask mt12,mt34;
-    Timer timer12,timer34;
 
-    byte[] dataTwoByte = new byte[2];
     private View.OnTouchListener MyTai = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             if(event.getAction()==MotionEvent.ACTION_CANCEL || event.getAction()==MotionEvent.ACTION_UP){
                 Toast.makeText(ControllerActivity.this, "UP", Toast.LENGTH_SHORT).show();
                 if(v.getId() == R.id.btn_left_control || v.getId() == R.id.btn_right_control){
-                    dataTwoByte[1] = 0;
+                    commandTwoBytes[1] = 0;
                     if(timer34 != null){
                         timer34.cancel();
                         //stopSendData();
@@ -196,13 +182,13 @@ public class ControllerActivity extends Activity implements View.OnClickListener
                 Toast.makeText(ControllerActivity.this, "ACTION_DOWN", Toast.LENGTH_SHORT).show();
                 switch (v.getId()){
                     case R.id.btn_left_control:
-                        dataTwoByte[1] = 0x3C;
+                        commandTwoBytes[1] = 0x3C;
                         timer34=new Timer();
                         mt34 = new MyTimerTask();
                         timer34.schedule(mt34,0,200);
                         break;
                     case R.id.btn_right_control:
-                        dataTwoByte[1] = 0x4C;
+                        commandTwoBytes[1] = 0x4C;
                         timer34=new Timer();
                         mt34 = new MyTimerTask();
                         timer34.schedule(mt34,0,200);
