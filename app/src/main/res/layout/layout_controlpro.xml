@@ -18,7 +18,7 @@
         android:layout_height="1080px"
         android:orientation="horizontal"
         android:layout_gravity="center_horizontal"
-        android:background="@drawable/bg_item_col">
+        android:background="@drawable/bg_item_pro">
 
         <RelativeLayout
             android:layout_width="0dp"

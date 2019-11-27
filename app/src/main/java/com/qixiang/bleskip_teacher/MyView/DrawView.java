@@ -28,6 +28,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -43,11 +44,12 @@ public class DrawView extends View {
     private float preY;//起始点的y坐标值
     private Path path;    //路径
     public Paint paint = null;    //画笔
-    public Paint mEraserPaint = null;//橡皮擦
     Bitmap cacheBitmap = null;// 定义一个内存中的图片，该图片将作为缓冲区
     Canvas cacheCanvas = null;// 定义cacheBitmap上的Canvas对象
-
     private Context theContext;
+    public ArrayList<Float> ar = new ArrayList<>();
+    //防止在轨迹自动销毁的过程中，未销毁完全，又进行轨迹绘制。
+    private boolean autoFlag = false;
     public DrawView(Context context, AttributeSet set) {
         super(context, set);
         theContext = context;
@@ -61,14 +63,16 @@ public class DrawView extends View {
         path = new Path();
         cacheCanvas.setBitmap(cacheBitmap);// 在cacheCanvas上绘制cacheBitmap
         paint = new Paint(Paint.DITHER_FLAG);
-        paint.setColor(Color.RED); // 设置默认的画笔颜色
+        paint.setColor(Color.GREEN); // 设置默认的画笔颜色
         // 设置画笔风格
         paint.setStyle(Paint.Style.STROKE);    //设置填充方式为描边
         paint.setStrokeJoin(Paint.Join.ROUND);        //设置笔刷的图形样式
         paint.setStrokeCap(Paint.Cap.ROUND);    //设置画笔转弯处的连接风格
-        paint.setStrokeWidth(50); // 设置默认笔触的宽度为5像素
+        paint.setStrokeWidth(40); // 设置默认笔触的宽度为5像素
         paint.setAntiAlias(true); // 使用抗锯齿功能
         paint.setDither(true); // 使用抖动效果
+
+        autoFlag = false;
     }
 
     @Override
@@ -83,6 +87,8 @@ public class DrawView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if(autoFlag)
+            return true;
         // 获取触摸事件的发生位置
         float x = event.getX();
         ar.add(x);
@@ -90,140 +96,94 @@ public class DrawView extends View {
         ar.add(y);
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                path.moveTo(x, y); // 将绘图的起始点移到（x,y）坐标点的位置
-                preX = x;
-                preY = y;
-                Utils.LogE("ACTION_下下。。。。。。。");
-                invalidate();
+                keyDownEvent(x,y);
                 break;
             case MotionEvent.ACTION_MOVE:
-                float dx = Math.abs(x - preX);
-                float dy = Math.abs(y - preY);
-                if (dx >= 5 || dy >= 5) { // 判断是否在允许的范围内
-                    path.quadTo(preX, preY, (x + preX) / 2, (y + preY) / 2);
-                    preX = x;
-                    preY = y;
-                }
-                Utils.LogE("ACTION_中中。。。。。。。");
-                invalidate();
-                //Utils.LogE("ACTION_MOVEeee:X"+preX+"  Y:"+preY);
+                keyMoveEvent(x,y);
                 break;
             case MotionEvent.ACTION_UP:
-                cacheCanvas.drawPath(path, paint); //绘制路径
-                path.reset();
-                Utils.LogE("ACTION_起起。。。。。。。");
-                invalidate();
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        diaClear();
-                    }
-                },1000);
-
+                keyUpEvent();
+                autoFlag = true;
+                directionCalculate();
+                handler.sendEmptyMessage(110);
                 break;
         }
-
         return true;        // 返回true表明处理方法已经处理该事件
     }
 
-    private void diaClear() {
-        //paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
-        paint.setColor(Color.BLUE);
-        paint.setAlpha(0);
-        paint.setStrokeWidth(52);    //设置笔触的宽度
-        invalidate();
-        if(timer == null)
-            timer = new Timer();
-        timer.schedule(new MyTimerTask(),1000,200);
-    }
-    private void diaClear2() {
-        //橡皮擦
-        mEraserPaint = new Paint();
-        mEraserPaint.setColor(Color.BLUE);
-        //mEraserPaint.setAlpha(0);
-        //这个属性是设置paint为橡皮擦重中之重
-        //这是重点
-        //下面这句代码是橡皮擦设置的重点
-        mEraserPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
-        //上面这句代码是橡皮擦设置的重点（重要的事是不是一定要说三遍）
-        mEraserPaint.setAntiAlias(true);
-        mEraserPaint.setDither(true);
-        mEraserPaint.setStyle(Paint.Style.STROKE);
-        mEraserPaint.setStrokeJoin(Paint.Join.ROUND);
-        mEraserPaint.setStrokeWidth(55);
-        invalidate();
-        if(timer == null)
-            timer = new Timer();
-        timer.schedule(new MyTimerTask(),1000,200);
-    }
-    public  ArrayList<Float> ar = new ArrayList<>();
-    private Handler handler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            float x = ar.get(index);
-            float y = ar.get(index+1);
-            if(index == 0){
-                path.moveTo(x, y); // 将绘图的起始点移到（x,y）坐标点的位置
-                preX = x;
-                preY = y;
-                index = index+2;
-                invalidate();
-            }else {
-                float dx = Math.abs(x - preX);
-                float dy = Math.abs(y - preY);
-                if (dx >= 5 || dy >= 5) { // 判断是否在允许的范围内
-                    path.quadTo(preX, preY, (x + preX) / 2, (y + preY) / 2);
-                    preX = x;
-                    preY = y;
+    private void directionCalculate(){
+        try {
+            float y2 =  ar.get(ar.size()-3);
+            float x2 =  ar.get(ar.size()-4);
+            float y1 =  ar.get(ar.size()-5);
+            float x1 =  ar.get(ar.size()-6);
+            float kValue = (y2-y1)/(x2-x1);
+            Utils.LogE("斜率K:"+ kValue);
+            if(kValue >= -0.414 && kValue < 0.414){
+                if(x2-x1>0){
+                    Utils.LogE("右:");
+                }else {
+                    Utils.LogE("左:");
                 }
-                invalidate();
-                index = index+2;
-                if(index+1 > ar.size()){
-                    invalidate();
-                    return;
+            }else if(kValue >= 0.414 && kValue < 2.414){
+                if(x2-x1>0){
+                    Utils.LogE("右下:");
+                }else {
+                    Utils.LogE("左上:");
                 }
-        }
-        }
-    };
-    int index =0;
-    Timer timer;
-
-    class MyTimerTask extends TimerTask{
-        @Override
-        public void run() {
-
-            if(index+1 > ar.size()){
-                cacheCanvas.drawPath(path, paint); //绘制路径
-                path.reset();
-
-                invalidate();
-                timer.cancel();
-                ar.clear();
-                this.cancel();
-                timer = null;
-                ((Activity)theContext).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(theContext,"完了",Toast.LENGTH_SHORT).show();
-
-                        nothing();
-                    }
-                });
-                return;
+            }else if(kValue >= 2.414 || kValue < -2.414){
+                if(y2-y1>0){
+                    Utils.LogE("下:");
+                }else {
+                    Utils.LogE("上:");
+                }
+            }else if(kValue >= -2.414 && kValue < -0.414){
+                if(y2-y1>0){
+                    Utils.LogE("左下:");
+                }else {
+                    Utils.LogE("右上:");
+                }
             }
-            handler.sendEmptyMessage(1);
+        }catch (Exception e){
+            e.printStackTrace();
         }
+
+    }
+    private void keyDownEvent(float x,float y){
+        path.moveTo(x, y); // 将绘图的起始点移到（x,y）坐标点的位置
+        preX = x;
+        preY = y;
+        invalidate();
+    }
+    private void keyMoveEvent(float x,float y){
+        float dx = Math.abs(x - preX);
+        float dy = Math.abs(y - preY);
+        if (dx >= 5 || dy >= 5) { // 判断是否在允许的范围内
+            path.quadTo(preX, preY, (x + preX) / 2, (y + preY) / 2);
+            preX = x;
+            preY = y;
+        }
+        invalidate();
     }
 
+    private void keyUpEvent(){
+        cacheCanvas.drawPath(path, paint); //绘制路径
+        path.reset();
+        invalidate();
+    }
+    private void diaClear() {
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+        paint.setColor(Color.RED);
+        paint.setStrokeWidth(50);    //设置笔触的宽度
+        invalidate();
+        if(timer == null)
+            timer = new Timer();
+        timer.schedule(new MyTimerTask(),1000,200);
+    }
     public void clear() {
-        //paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
-        //Color.TRANSPARENT
-        paint.setColor(Color.YELLOW);
-        paint.setAlpha(0);
-        paint.setStrokeWidth(52);    //设置笔触的宽度
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+        paint.setColor(Color.RED);
+        paint.setStrokeWidth(50);    //设置笔触的宽度
         invalidate();
     }
 
@@ -234,6 +194,7 @@ public class DrawView extends View {
     }
 
     public void nothing() {
+
         cacheBitmap = null;
         // 创建一个与该View相同大小的缓存区
         cacheBitmap = Bitmap.createBitmap(view_width, view_height,
@@ -241,6 +202,9 @@ public class DrawView extends View {
         cacheCanvas = new Canvas();
         cacheCanvas.setBitmap(cacheBitmap);// 在cacheCanvas上绘制cacheBitmap
         invalidate();
+        paint.setXfermode(null);        //取消擦除效果
+        paint.setStrokeWidth(40);
+        autoFlag = false;
     }
 
     public void save(int i, int j) {
@@ -308,6 +272,56 @@ public class DrawView extends View {
         //}
         return directoryPath;
     }
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
 
+            switch (msg.what){
+                case 110:
+                    diaClear();
+                    break;
+                case 111:
+                    float x = ar.get(index);
+                    float y = ar.get(index+1);
+                    if(index == 0){
+                        keyDownEvent(x,y);
+                        index = index+2;
+                    }else {
+                        keyMoveEvent(x,y);
+                        index = index+2;
+                        if(index+1 > ar.size()){
+                            invalidate();
+                            return;
+                        }
+                    }
+                    break;
+                case 112:
+                    keyUpEvent();
+                    Toast.makeText(theContext,"完了",Toast.LENGTH_SHORT).show();
+                    nothing();
+                    break;
+            }
 
+        }
+    };
+    int index =0;
+    Timer timer;
+
+    class MyTimerTask extends TimerTask {
+        @Override
+        public void run() {
+
+            if(index+1 > ar.size()){
+                handler.sendEmptyMessage(112);
+                timer.cancel();
+                ar.clear();
+                index = 0;
+                this.cancel();
+                timer = null;
+                return;
+            }
+            handler.sendEmptyMessage(111);
+        }
+    }
 }

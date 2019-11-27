@@ -124,6 +124,12 @@ public class CodingActivity extends AppCompatActivity implements View.OnClickLis
                 break;
         }
     }
+    private void sendDataToJs(){
+        //服务名：IMPP
+        //方法名：click_save click_reload zoom_in zoon_out green_flag stop_flag
+
+
+    }
 
     public class TestJs {
 
